@@ -1,0 +1,214 @@
+/*
+    font-family: 'Lato', sans-serif; 300, 400 italic, 700
+    font-family: 'Roboto', sans-serif; 300 italic, 400
+    font-family: 'Montserrat', sans-serif; 400, 600
+*/
+
+:root {
+    --darker-purple: rgb(92, 80, 156);
+    --dismiss-red: rgb(247, 128, 128);
+    --accept-green: rgb(148, 216, 148);
+    --bright-pink: rgb(200, 9, 76);
+    --dusty-pink: rgb(197, 87, 112);
+    --semi-pink: rgb(207, 116, 137);
+    --lighter-pink: rgb(225, 157, 172);
+    --light-pink: rgb(236, 195, 203);
+    --beige: rgb(240, 236, 235);
+    --light-beige: rgba(243, 242, 240, 0.651);
+    --gray-text: rgb(73, 72, 72);
+    --border-color : rgb(183, 194, 198);
+}
+
+/* Base */
+.zero-margin-padding {
+    padding: 0%;
+    margin: 0%;
+}
+
+
+
+/* New Item */
+.new-item-title-frame {
+    padding: 1rem;
+    border: solid 1px;
+    border-color: var(--border-color);
+    border-radius: 4px;
+    background-color: var(--beige);
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    display: grid;
+}
+
+.page-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    font-style: italic;
+    text-align: start;
+}
+
+.new-product-form {
+    display: grid;
+    grid-template-columns: 4fr 2fr;
+    grid-template-rows: 0.5fr 0.5fr 1fr 0.5fr 0.5fr;
+    column-gap: 10px;
+    grid-template-areas: "title title"
+        "price quantity"
+        "decsription decsription"
+        "image category"
+        ". button";
+    padding-top: 2rem;
+    padding-right: 3rem;
+    padding-left: 3rem;
+}
+
+.new-product-div-style {
+    border: 1px solid;
+    border-color: var(--beige);
+    box-shadow: 15px 10px 25px var(--beige);
+}
+
+.new-item-image {
+    max-height: 35em;
+    max-width: 100%;
+    padding: 1rem;
+}
+
+/*hide help text*/
+#error_1_id_price,
+#error_1_id_image,
+#error_1_id_title,
+#error_1_id_description,
+#error_1_id_quantity,
+#error_1_id_category {
+    display: none;
+}
+
+#div_id_image {
+    grid-area: image;
+}
+
+#div_id_title {
+    grid-area: title;
+}
+
+#div_id_description {
+    grid-area: decsription;
+}
+
+#div_id_price {
+    grid-area: price;
+}
+
+#div_id_quantity {
+    grid-area: quantity;
+}
+
+#div_id_category {
+    grid-area: category;
+}
+
+#id_title,
+#id_quantity,
+#id_price,
+#id_inventory,
+#id_category {
+    border-radius: 20px;
+    min-height: 2rem;
+}
+
+#id_description {
+    min-height: 10rem;
+}
+
+.post-button-grid {
+    width: 4.5rem;
+    height: 2.5rem;
+    border-radius: 10px;
+    border: solid 1px;
+    border-color: var(--semi-pink);
+    background-color: transparent;
+    font-family: 'Roboto', sans-serif;
+    grid-area: button;
+    justify-self: end;
+    color: var(--semi-pink);
+}
+
+.post-button-grid:hover {
+    background-color: var(--semi-pink);
+    color: white;
+}
+
+.new-item-top-icon {
+    color: var(--semi-pink);
+    font-size: 2.2rem;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+}
+
+.new-item-top-icon:hover {
+    opacity: 0.8;
+}
+
+
+/* Navbar */
+.sidebar {
+    width: 100%;
+    height: 100%;
+    background-color: var(--light-pink);
+    position: relative;
+    min-height: 100vh;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: width 0.4s;
+}
+
+.sidebar a {
+    display: block;
+    color: black;
+    padding: 16px;
+    text-decoration: none;
+}
+
+.active {
+    background-color: var(--semi-pink);
+    color: white;
+}
+
+.sidebar a:hover {
+    background-color: var(--semi-pink);
+    color: white;
+}
+
+/* On screens that are less than 700px wide, make the sidebar into a topbar */
+/* Taken from: https://www.w3schools.com/howto/howto_css_sidebar_responsive.asp*/
+@media screen and (max-width: 700px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar a {
+        float: left;
+    }
+
+    div.content {
+        margin-left: 0;
+    }
+}
+
+/* On screens that are less than 400px, display the bar vertically, instead of horizontally */
+/* Taken from: https://www.w3schools.com/howto/howto_css_sidebar_responsive.asp*/
+@media screen and (max-width: 400px) {
+    .sidebar a {
+        text-align: center;
+        float: none;
+    }
+}
+
+.new-item-icon {
+    font-size: 1.4rem;
+    margin-right: 1rem;
+}
