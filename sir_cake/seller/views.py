@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.utils import timezone
 from django.shortcuts import render
 
 from .forms import NewItemForm
@@ -11,6 +10,7 @@ def new_product(request):
         if form.is_valid():
             form.save()
             messages.success(request, "New product successfully saved")
+            # TODO redirect
         else:
             messages.error(
                 "Error: Unable to save the product. Please try again.")
