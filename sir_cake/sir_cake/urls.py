@@ -21,7 +21,8 @@ from seller import views as seller_views
 
 
 urlpatterns = [
-    path('new-product/', seller_views.new_product, name="new-product"),
+    path('new-item/', seller_views.new_item, name="new_item"),
+    path('item/<int:pk>/', seller_views.item_detail, name="item_detail"),
 ]
 
 if settings.DEBUG:

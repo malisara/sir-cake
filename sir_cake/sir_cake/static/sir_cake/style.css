@@ -10,13 +10,13 @@
     --accept-green: rgb(148, 216, 148);
     --bright-pink: rgb(200, 9, 76);
     --dusty-pink: rgb(197, 87, 112);
-    --semi-pink: rgb(207, 116, 137);
+    --semi-pink: rgb(235, 135, 159);
     --lighter-pink: rgb(225, 157, 172);
     --light-pink: rgb(236, 195, 203);
     --beige: rgb(240, 236, 235);
     --light-beige: rgba(243, 242, 240, 0.651);
     --gray-text: rgb(73, 72, 72);
-    --border-color : rgb(183, 194, 198);
+    --border-color: rgba(183, 194, 198, 0.5);
 }
 
 /* Base */
@@ -25,6 +25,9 @@
     margin: 0%;
 }
 
+.non-link {
+    text-decoration: none;
+}
 
 
 /* New Item */
@@ -211,4 +214,83 @@
 .new-item-icon {
     font-size: 1.4rem;
     margin-right: 1rem;
+}
+
+/*Detail page*/
+.detail-item-containter {
+    border: solid 2px;
+    border-color: var(--border-color);
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px var(--beige);
+    margin-top: 4rem;
+    padding: 1rem;
+    display: flex;
+}
+
+.image-detail {
+    display: flex;
+    width: 50%;
+    justify-content: center;
+}
+
+.rounded-image {
+    border-radius: 10px;
+}
+
+.info-div-detail {
+    width: 50%;
+}
+
+.detail-category {
+    color: var(--semi-pink);
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+}
+
+.detail-title {
+    font-family: 'Lato', sans-serif;
+    color: rgb(56, 56, 56);
+    font-size: 1.5rem;
+    margin-top: 0.1rem;
+}
+
+.detail-price {
+    font-family: 'Lato', sans-serif;
+    color: var(--semi-pink);
+    font-size: 2rem;
+    margin-top: 0.4rem;
+    font-weight: 700;
+}
+
+.detail-description {
+    margin-top: 1rem;
+    font-family: 'Lato', sans-serif;
+}
+
+.detail-button {
+    height: 3rem;
+    border-radius: 10px;
+    background-color: var(--semi-pink);
+    font-family: 'Lato', sans-serif;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 0.5rem;
+    margin-top: 3rem;
+}
+
+.detail-button:hover {
+    color: var(--semi-pink);
+    background-color: transparent;
+    border: solid 1px;
+    border-color: var(--semi-pink);
+}
+
+.go-back-icon {
+    font-size: 2.5rem;
+    color: var(--semi-pink);
+    margin-left: 1rem;
+}
+
+.go-back-icon:hover {
+    opacity: 0.7;
 }

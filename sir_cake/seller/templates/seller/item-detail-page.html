@@ -1,0 +1,23 @@
+{% extends 'seller/base.html' %}
+
+{% block content %}
+
+<div class="container detail-item-containter">
+    <a href="#all-products">
+        <!--TODO-->
+        <i class="bi bi-arrow-left go-back-icon"></i>
+    </a>
+    <div class="image-detail"><img src="{{item.image.url}}" class="rounded-image"></img></div>
+    <div class=info-div-detail>
+        <div class="detail-category">{{item.long_category}}</div>
+        <div class="detail-title">{{item.title}}</div>
+        <div class="detail-price">{{item.price}}€</div>
+        <div class="detail-description">{{item.description}}</div>
+        <!--TODO-->
+        <a href="#edit_item" class="non-link">
+            <div class="detail-button">EDIT</div>
+        </a>
+    </div>
+</div>
+
+{% endblock %}

@@ -41,6 +41,7 @@ class Item(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shorter_title_description()
+        self.assign_category_full_name()
 
     def __str__(self):
         return self.title
