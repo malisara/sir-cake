@@ -23,6 +23,7 @@ from seller import views as seller_views
 urlpatterns = [
     path('new-item/', seller_views.new_item, name="new_item"),
     path('item/<int:pk>/', seller_views.item_detail, name="item_detail"),
+    path('all-items/', seller_views.all_items, name="all_items"),
 ]
 
 if settings.DEBUG:
