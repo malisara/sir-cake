@@ -11,21 +11,19 @@ def all_products_context(request):
 
     items = Item.objects.all().order_by('-id')
     if len(items) == 0:
-        context = {'items': None,
-                   'url_name': url_name,
-                   }
-    else:
-        searched = request.GET.get('searched')
-        if searched is not None and searched != "":
-            items = items.filter(title__icontains=searched)
-        items = pagination(request, items, 15)
+        return {'items': None,
+                'url_name': url_name,
+                }
 
-        context = {
-            'items': items,
-            'url_name': url_name,
-        }
+    searched = request.GET.get('searched')
+    if searched is not None and searched != "":
+        items = items.filter(title__icontains=searched)
+    items = pagination(request, items, 15)
 
-    return context
+    return {
+        'items': items,
+        'url_name': url_name,
+    }
 
 
 def pagination(request, item_list, number_items_displayed):

@@ -1,6 +1,6 @@
 <div class="sidebar">
-  {% if url_name == 'all-products' %}
-  <a href="#'all-products'" class="active"><i class="bi bi-cart3 new-item-icon"></i>All products</a>
+  {% if url_name == 'all_items' %}
+  <a href="{% url 'all_items' %}" class="active"><i class="bi bi-cart3 new-item-icon"></i>All products</a>
   {% else %}
   <a href="#'all-products'"><i class="bi bi-cart3 new-item-icon"></i>All products</a>
   {% endif %}
