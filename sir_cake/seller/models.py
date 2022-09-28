@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from PIL import Image
 
-from .utils import crop_max_square
+from .image_utils import crop_max_square
 
 
 class Item(models.Model):

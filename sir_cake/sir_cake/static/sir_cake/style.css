@@ -139,7 +139,7 @@
 
 .post-button-grid:hover {
     background-color: var(--semi-pink);
-    color: white;
+    color: #FFFFFF;
 }
 
 .new-item-top-icon {
@@ -176,12 +176,13 @@
 
 .active {
     background-color: var(--semi-pink);
-    color: white;
+    color: #FFFFFF;
 }
+
 
 .sidebar a:hover {
     background-color: var(--semi-pink);
-    color: white;
+    color: #FFFFFF;
 }
 
 /* On screens that are less than 700px wide, make the sidebar into a topbar */
@@ -293,4 +294,156 @@
 
 .go-back-icon:hover {
     opacity: 0.7;
+}
+
+/*All items*/
+.new-item-top-icon {
+    color: var(--semi-pink);
+    font-size: 2.2rem;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+}
+
+.new-item-top-icon:hover {
+    opacity: 0.8;
+}
+
+.product-grid-container {
+    margin: 2rem 2rem 0 0;
+    padding: 1rem;
+    border: solid 1px;
+    border-color: var(--border-color);
+    border-radius: 4px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 2fr 2fr 2fr 2fr;
+    grid-template-areas:
+        "image title description category price inventory action";
+}
+
+.beige-bg {
+    background-color: var(--beige);
+}
+
+.grid-item-image {
+    grid-area: image;
+    justify-self: center;
+}
+
+.grid-item-title {
+    grid-area: title;
+    justify-self: center;
+}
+
+.grid-item-description {
+    grid-area: description;
+    justify-self: center;
+}
+
+.grid-item-category {
+    grid-area: category;
+    justify-self: center;
+}
+
+.grid-item-price {
+    grid-area: price;
+    justify-self: center;
+}
+
+.grid-item-inventory {
+    grid-area: inventory;
+    justify-self: center;
+}
+
+.grid-item-action {
+    grid-area: action;
+    justify-self: center;
+}
+
+.category-text {
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+.all-products-data-text {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    color: #000000;
+}
+
+.warning-data-text {
+    color: var(--dismiss-red);
+}
+
+.replacement-text-middle {
+    text-align: center;
+    margin-top: 2rem;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.1rem;
+}
+
+.zoom-action-button {
+    color: rgb(59, 112, 59);
+    margin: 0.2rem;
+    font-size: 1.1rem;
+}
+
+.edit-action-button {
+    color: rgb(88, 87, 87);
+    margin: 0.2rem;
+    font-size: 1.1rem;
+}
+
+.delete-action-button {
+    color: red;
+    margin: 0.2rem;
+    font-size: 1.1rem;
+}
+
+.zoom-action-button:hover,
+.edit-action-button:hover,
+.delete-action-button:hover {
+    opacity: 0.7;
+}
+
+
+/*Pagination*/
+.pagination {
+    margin-top: 8rem;
+    justify-content: center;
+}
+
+.pagination-button {
+    color: var(--dusty-pink);
+    border: 1px solid;
+    border-radius: 5px;
+    border-color: var(--lighter-pink);
+    text-decoration: none;
+    padding: 0.5rem 0.8rem;
+    margin: 0 0.1rem;
+    background-color: transparent;
+}
+
+.pagination-button:hover {
+    text-decoration: none;
+    background-color: var(--dusty-pink);
+    color: #FFFFFF;
+}
+
+.pagination-button-full {
+    background-color: var(--dusty-pink);
+    border: 1px solid;
+    border-radius: 5px;
+    border-color: var(--lighter-pink);
+    text-decoration: none;
+    padding: 0.5rem 0.8rem;
+    color: #FFFFFF;
+    margin: 0.1rem;
+}
+
+.pagination-button-full:hover {
+    text-decoration: none;
+    background-color: #FFFFFF;
+    color: var(--dusty-pink);
 }

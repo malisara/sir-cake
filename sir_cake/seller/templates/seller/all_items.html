@@ -1,0 +1,78 @@
+{% extends 'seller/base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col">
+            <a href="{% url 'new_item' %}">
+                <i class="bi bi-plus-square-fill new-item-top-icon"></i>
+            </a>
+        </div>
+        <div class="col">
+            <form method="GET" class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searched">
+                <button class="pagination-button" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="product-grid-container beige-bg">
+        <div class="grid-item-image category-text">image</div>
+        <div class="grid-item-title category-text">title</div>
+        <div class="grid-item-description category-text">description</div>
+        <div class="grid-item-category category-text">category</div>
+        <div class="grid-item-price category-text">price</div>
+        <div class="grid-item-inventory category-text">inventory</div>
+        <div class="grid-item-action category-text">action</div>
+    </div>
+
+    {% if items %}
+    {% for item in items %}
+    <div class="product-grid-container">
+        <a href="{% url 'item_detail' item.pk %}">
+            <div class="grid-item-image all-products-data-text"><img src="{{item.image.url}}" height="100px"></img>
+        </a>
+    </div>
+    <div class="grid-item-title all-products-data-text">{{item.short_title}}</div>
+    <div class="grid-item-description all-products-data-text">{{item.short_description}}</div>
+    <div class="grid-item-category all-products-data-text">{{item.long_category}}</div>
+    <div class="grid-item-price all-products-data-text">{{item.price}}€</div>
+    {% if item.quantity is 0 %}
+    <div class="grid-item-inventory all-products-data-text warning-data-text">{{item.quantity}}</div>
+    {% else %}
+    <div class="grid-item-inventory all-products-data-text">{{item.quantity}}</div>
+    {% endif %}
+    <div class="grid-item-action all-products-data-text">
+        <a href="{% url 'item_detail' item.pk %}"><i class="bi bi-zoom-in zoom-action-button"></i></a>
+        <a href="#'edit_item' item.pk"><i class="bi bi-pencil edit-action-button"></i></a>
+        <a href="#'delete_item' item.pk"><i class="bi bi-x-lg delete-action-button"></i></a>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="replacement-text-middle">No items</div>
+{% endif %}
+
+<!--Paginator-->
+<div class="pagination">
+    {% if page_obj.has_previous %}
+    <a class="pagination-button" href="?page=1">&lt;&lt;</a>
+    <a class="pagination-button" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    {% for num in all_items.paginator.page_range %}
+    {% if all_items.number == num %}
+    <a class="pagination-button-full" href="?page={{ num }}">{{ num }}</a>
+    {% elif num > all_items.number|add:'-3' and num < all_items.number|add:'3' %} <a class="pagination-button"
+        href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+        {% if all_items.has_next %}
+        <a class="pagination-button" href="?page={{ all_items.next_page_number }}">Next</a>
+        <a class="pagination-button" href="?page={{ all_items.paginator.num_pages }}">&gt;&gt;</a>
+        {% endif %}
+</div>
+
+</div>
+
+{% endblock content %}
