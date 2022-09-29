@@ -1,0 +1,30 @@
+{% extends 'seller/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+    <div class="new-item-title-frame">
+        <div class="page-title">Edit item: {{item}}</div>
+    </div>
+    <div class="new-product-div-style">
+        <div class="row">
+            <div class="col-sm-9">
+                <a href="{% url 'all_items' %}">
+                    <i class="bi bi-arrow-left go-back-icon"></i>
+                </a>
+                <form method="post" class="new-product-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{form|crispy}}
+                    <button type="submit" class="post-button-grid">Save</button>
+                </form>
+            </div>
+            <div class="col-sm-3">
+                <img src="{% static 'seller/doughnuts2.jpg' %}" alt="" class="new-item-image mt-5">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

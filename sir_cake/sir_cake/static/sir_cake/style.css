@@ -20,6 +20,10 @@
 }
 
 /* Base */
+body {
+    overflow-x: hidden;
+}
+
 .zero-margin-padding {
     padding: 0%;
     margin: 0%;
