@@ -44,7 +44,7 @@
     {% endif %}
     <div class="grid-item-action all-products-data-text">
         <a href="{% url 'item_detail' item.pk %}"><i class="bi bi-zoom-in zoom-action-button"></i></a>
-        <a href="#'edit_item' item.pk"><i class="bi bi-pencil edit-action-button"></i></a>
+        <a href="{% url 'edit_item' item.pk %}"><i class="bi bi-pencil edit-action-button"></i></a>
         <a href="#'delete_item' item.pk"><i class="bi bi-x-lg delete-action-button"></i></a>
     </div>
 </div>

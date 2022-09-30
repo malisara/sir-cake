@@ -24,7 +24,7 @@ urlpatterns = [
     path('new-item/', seller_views.new_item, name="new_item"),
     path('item/<int:pk>/', seller_views.item_detail, name="item_detail"),
     path('all-items/', seller_views.all_items, name="all_items"),
-    path('edit/<int:pk>/', seller_views.edit_item, name="edit_item"),
+    path('item/<int:pk>/edit/', seller_views.edit_item, name="edit_item"),
 ]
 
 if settings.DEBUG:
