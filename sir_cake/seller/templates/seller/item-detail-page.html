@@ -14,7 +14,7 @@
         <div class="detail-price">{{item.price}}€</div>
         <div class="detail-description">{{item.description}}</div>
         <!--TODO-->
-        <a href="#edit_item" class="non-link">
+        <a href="{% url 'edit_item' item.pk %}" class="non-link">
             <div class="detail-button">EDIT</div>
         </a>
     </div>
