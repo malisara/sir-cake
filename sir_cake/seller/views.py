@@ -60,3 +60,16 @@ def edit_item(request, pk):
         'form': form}
 
     return render(request, 'seller/edit-item.html', context)
+
+
+def delete_item(request, pk):
+    try:
+        item = Item.objects.get(id=pk)
+    except ObjectDoesNotExist:
+        return HttpResponseNotFound()
+
+    if request.method == "POST":
+        item.delete()
+        messages.success(request, "Item successfully deleted")
+        return redirect('all_items')
+    return render(request, 'seller/delete-item.html', {'item': item})
