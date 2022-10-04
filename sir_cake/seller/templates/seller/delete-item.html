@@ -1,0 +1,32 @@
+{% extends 'seller/base.html' %}
+{% block content %}
+
+<div class="container detail-item-containter">
+    <div class="image-detail"><img src="{{item.image.url}}" style="border-radius: 15px;"></img></div>
+    <div class=info-div-detail>
+        <div class="detail-category">{{item.long_category}}</div>
+        <div class="detail-title">{{item.title}}</div>
+        <div class="detail-price">{{item.price}}€</div>
+        <div class="detail-description">{{item.description}}</div>
+
+        <div class="container p-5">
+            <div class="row">
+                <div class="col">
+                    <form method="post">
+                        {% csrf_token %}
+                        <button class="delete-button" type="submit">Delete</button>
+                        </a>
+                    </form>
+                </div>
+                <div class="col">
+                    <a href="{% url 'all_items' %}" class="non-link">
+                        <div class="back-button">Back</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}

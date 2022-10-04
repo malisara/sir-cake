@@ -237,8 +237,9 @@ body {
 
 .image-detail {
     display: flex;
-    width: 50%;
+    width: 40%;
     justify-content: center;
+    margin-right: 2rem;
 }
 
 .rounded-image {
@@ -280,6 +281,7 @@ body {
     border-radius: 10px;
     background-color: var(--semi-pink);
     font-family: 'Lato', sans-serif;
+    font-weight: 700;
     color: #FFFFFF;
     text-align: center;
     padding: 0.5rem;
@@ -417,7 +419,7 @@ body {
 
 /*Pagination*/
 .pagination {
-    margin-top: 8rem;
+    margin: 5rem 0 1.5rem 0;
     justify-content: center;
 }
 
@@ -453,4 +455,46 @@ body {
     text-decoration: none;
     background-color: #FFFFFF;
     color: var(--dusty-pink);
+}
+
+/*Delete item*/
+
+.delete-button {
+    margin-top: 2rem;
+    height: 3rem;
+    border-radius: 10px;
+    background-color: transparent;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    color: var(--dismiss-red);
+    text-align: center;
+    padding: 0.5rem;
+    border-color: var(--dismiss-red);
+    border: solid 1px;
+    width: 50%;
+}
+
+.delete-button:hover {
+    color: #ffffff;
+    background-color: var(--dismiss-red);
+}
+
+.back-button {
+    margin-top: 2rem;
+    height: 3rem;
+    border-radius: 10px;
+    background-color: transparent;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    color: var(--accept-green);
+    text-align: center;
+    padding: 0.5rem;
+    border: solid 1px;
+    border-color: var(--accept-green);
+    width: 50%;
+}
+
+.back-button:hover {
+    color: #FFFFFF;
+    background-color: var(--accept-green);
 }

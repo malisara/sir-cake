@@ -4,7 +4,6 @@
 
 <div class="container detail-item-containter">
     <a href="{% url 'all_items' %}">
-        <!--TODO-->
         <i class="bi bi-arrow-left go-back-icon"></i>
     </a>
     <div class="image-detail"><img src="{{item.image.url}}" class="rounded-image"></img></div>
@@ -13,7 +12,6 @@
         <div class="detail-title">{{item.title}}</div>
         <div class="detail-price">{{item.price}}€</div>
         <div class="detail-description">{{item.description}}</div>
-        <!--TODO-->
         <a href="{% url 'edit_item' item.pk %}" class="non-link">
             <div class="detail-button">EDIT</div>
         </a>
