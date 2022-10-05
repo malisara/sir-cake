@@ -18,6 +18,7 @@ from django.conf.urls.static import static
 from django.urls import path
 
 from seller import views as seller_views
+from users import views as user_views
 
 
 urlpatterns = [
@@ -26,6 +27,8 @@ urlpatterns = [
     path('all-items/', seller_views.all_items, name="all_items"),
     path('item/<int:pk>/edit/', seller_views.edit_item, name="edit_item"),
     path('item/<int:pk>/delete/', seller_views.delete_item, name="delete_item"),
+
+    path('register/', user_views.register, name="register"),
 ]
 
 if settings.DEBUG:
