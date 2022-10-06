@@ -5,13 +5,13 @@ from django.contrib.sessions.models import Session
 
 class AnonymousUser(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
-    name = models.CharField(max_length=150, default=None)
-    last_name = models.CharField(max_length=150, default=None)
+    name = models.CharField(max_length=40, default=None)
+    last_name = models.CharField(max_length=40, default=None)
 
 
 class ShippingAddress(models.Model):
     street_name = models.CharField(max_length=200)
-    house_number = models.IntegerField()
+    house_number = models.CharField(max_length=5)
     city = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
     user = models.ForeignKey(

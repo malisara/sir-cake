@@ -30,5 +30,5 @@ class AnonShippingAddressForm(forms.ModelForm):
 
 
 class UserUpdateNamesForm(forms.Form):
-    name = forms.CharField(label='Name', max_length=150)
-    last_name = forms.CharField(label='Last name', max_length=150)
+    name = forms.CharField(label='Name', max_length=40)
+    last_name = forms.CharField(label='Last name', max_length=40)
