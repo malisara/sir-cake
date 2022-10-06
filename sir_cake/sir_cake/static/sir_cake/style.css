@@ -498,3 +498,84 @@ body {
     color: #FFFFFF;
     background-color: var(--accept-green);
 }
+
+/*USERS*/
+
+/*Navbar-users*/
+
+nav {
+    min-height: 10rem;
+    border-bottom: 1px dotted;
+    background-color: #FFFFFF;
+}
+
+.navbar-logo-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 2.5rem;
+    color: var(--gray-text);
+}
+
+.navbar-icon {
+    padding-right: 1rem;
+    font-size: 1.2rem;
+}
+
+.navbar-icon:hover,
+.navbar-icon-bg-fill:hover {
+    color: var(--semi-pink);
+}
+
+.navbar-icon-bg-fill {
+    padding-right: 1rem;
+    font-size: 1.2rem;
+    color: var(--gray-text);
+}
+
+.link-to-nav-gray {
+    color: var(--gray-text);
+}
+
+
+/*Register*/
+
+.register-container-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+        ". form .";
+    margin: 4rem 0rem;
+}
+
+.register-form {
+    border: 1px solid;
+    border-color: var(--beige);
+    box-shadow: 15px 10px 25px var(--beige);
+    padding: 2rem;
+    grid-area: form;
+}
+
+.form-title-frame {
+    padding: 1rem;
+    border: solid 1px;
+    border-color: var(--border-color);
+    border-radius: 4px;
+    background-color: var(--beige);
+    margin-bottom: 2rem;
+}
+
+.link {
+    color: var(--semi-pink);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link:hover {
+    color: var(--semi-pink);
+    opacity: 0.7;
+    text-decoration: none;
+}
+
+.additional-form-text {
+    font-style: italic;
+    font-size: 0.9rem;
+}

@@ -1,0 +1,29 @@
+<nav class="navbar">
+
+    <div class="container-fluid justify-content-end">
+        {% if user.is_authenticated %}
+        <a href="#logout" class="non-link link-to-nav-gray"><i class="bi bi-box-arrow-right navbar-icon"></i></a>
+        {% else %}
+        <a href="{% url 'register' %}" class="non-link link-to-nav-gray"><i
+                class="bi bi-person-plus navbar-icon"></i></a>
+        <a href="#login" class="non-link link-to-nav-gray"><i class="bi bi-box-arrow-in-right navbar-icon"></i></a>
+        {% endif %}
+
+        {% if items_in_basket %}
+        <a href="#shopping bag" class="non-link link-to-nav-gray">
+            <i class="bi bi-basket3-fill navbar-icon-bg-fill">
+                <!--TODO notification-->
+            </i>
+        </a>
+        {% else %}
+        <a href="#shopping bag" class="non-link link-to-nav-gray">
+            <i class="bi bi-basket3 navbar-icon"></i>
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="container-fluid justify-content-center">
+        <a class="navbar-logo-title non-link" href="#store">Logo</a>
+    </div>
+
+</nav>
