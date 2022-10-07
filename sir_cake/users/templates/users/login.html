@@ -4,19 +4,22 @@
 {% block content %}
 
 <div class="register-container-grid">
+
     <div class="register-form">
         <div class="form-title-frame">
-            <div class="page-title">Registration</div>
+            <div class="page-title">Login</div>
         </div>
         <form method="post">
             {% csrf_token %}
             {{form|crispy}}
             <div class="d-flex justify-content-end">
-                <button type="submit" class="post-button-grid mt-2">Register</button>
+                <button type="submit" class="post-button-grid mt-2">Log in</button>
             </div>
         </form>
-        <p class="additional-form-text">Already have an account? <a href="{% url 'login' %}" class="link">Login</a></p>
+        <p class="additional-form-text">Don't have an account yet? <a href="{% url 'register' %}"
+                class="link">Register</a></p>
     </div>
 </div>
+
 
 {% endblock content %}
