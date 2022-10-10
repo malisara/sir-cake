@@ -1,0 +1,18 @@
+<div class="pagination">
+    {% if items.has_previous %}
+    <a class="pagination-button" href="?page=1">&lt;&lt;</a>
+    <a class="pagination-button" href="?page={{ items.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    {% for num in items.paginator.page_range %}
+    {% if items.number == num %}
+    <a class="pagination-button-full" href="?page={{ num }}">{{ num }}</a>
+    {% elif num > items.number|add:'-3' and num < items.number|add:'3' %} <a class="pagination-button"
+        href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+        {% if items.has_next %}
+        <a class="pagination-button" href="?page={{ items.next_page_number }}">Next</a>
+        <a class="pagination-button" href="?page={{ items.paginator.num_pages }}">&gt;&gt;</a>
+        {% endif %}
+</div>

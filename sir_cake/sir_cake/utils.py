@@ -1,15 +1,20 @@
 from django.core.paginator import Paginator
 
-from .models import Item
+from seller.models import Item
 
 
 def all_products_context(request):
     # Returns paginated items & responsive url name
     url_name = request.resolver_match.url_name
 
-    # TODO sort results
-
     items = Item.objects.all().order_by('-id')
+
+    # For sorting results in store app
+    if request.method == "GET":
+        category = request.GET.get('category')
+        if category != "" and category is not None and category != 'ALL':
+            items = Item.objects.filter(category=category)
+
     if len(items) == 0:
         return {'items': None,
                 'url_name': url_name,
