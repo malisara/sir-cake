@@ -143,4 +143,4 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
 
-LOGIN_REDIRECT_URL = 'logout'  # TODO change to store
+LOGIN_REDIRECT_URL = 'store'

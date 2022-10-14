@@ -76,8 +76,8 @@ class Item(models.Model):
 
 class OrderPackage(models.Model):
     buyer = models.ForeignKey(
-        User, on_delete=models.CASCADE,  default=None, blank=True, null=True)
+        User, on_delete=models.CASCADE, blank=True, null=True)
+    buyer_anon = models.ForeignKey(
+        AnonymousUser, on_delete=models.CASCADE, blank=True, null=True)
     order_date = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=10)
-    buyer_anon = models.ForeignKey(
-        AnonymousUser, on_delete=models.CASCADE, default=None, blank=True, null=True)

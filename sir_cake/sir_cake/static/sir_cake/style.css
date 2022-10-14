@@ -648,3 +648,26 @@ nav {
     color: #FFFFFF;
     background-color: var(--semi-pink);
 }
+
+
+/*Continue Purchase*/
+
+.anon-user-button {
+    height: 3rem;
+    border-radius: 10px;
+    color: var(--semi-pink);
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    border: solid 1px;
+    border-color: var(--semi-pink);
+    text-align: center;
+    padding: 0.5rem;
+    margin-top: 3rem;
+    background-color: #FFFFFF;
+    width: 100%;
+}
+
+.anon-user-button:hover {
+    background-color: var(--semi-pink);
+    color: #FFFFFF;
+}

@@ -1,0 +1,27 @@
+{% extends 'users/base-user.html' %}
+
+{% block content %}
+<div class="register-container-grid">
+    <div class="register-form">
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-title-frame d-flex justify-content-center">
+                <div class="page-title">Please choose an option</div>
+            </div>
+
+            <a href="{% url 'login' %}" class="non-link">
+                <div class="detail-button">LOGIN
+                </div>
+            </a>
+
+            <p class="additional-form-text mt-2">Don't have an account yet? <a href="{% url 'register' %}"
+                    class="link">Register
+                    here</a></p>
+            <button class="anon-user-button" type="submit">Continue without login</button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock content %}

@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from seller.models import Item
 from sir_cake.utils import all_products_context
+from .models import AnonymousUser
+from .utils import add_one_item_basket
 
 
 def store(request):
@@ -15,6 +17,18 @@ def store(request):
             context['category'] = category
         else:
             context['category'] = 'All sweets'
-
-    # TODO: POST request- add to basket
+    else:
+        redirect_or_none = add_one_item_basket(request, context)
+        if redirect_or_none is not None:
+            return redirect(redirect_or_none)
     return render(request, 'store/store.html', context)
+
+
+def continue_purchase(request):  # choose if you'll continue with/-out login
+    if request.method == 'POST':
+        if not request.session.session_key:
+            request.session.create()
+            AnonymousUser.objects.create(
+                session_id=request.session.session_key)
+        return redirect('store')
+    return render(request, 'store/continue-purchase.html')
