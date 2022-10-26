@@ -19,7 +19,7 @@
 <div class="container products-grid mt-5">
     {% if items %}
     {% for item in items %}
-    <!--Only show thr item if inventory > 0 -->
+    <!--Only show the item if inventory > 0 -->
     {% if item.quantity > 0 %}
     <div>
         <a href="# 'product-detail' item.pk" class="non-link a-hover">
@@ -34,9 +34,10 @@
             </button>
         </form>
     </div>
-    <!--TODO else:No items-->
     {% endif %}
     {% endfor %}
+    {% else %}
+    No items
     {% endif %}
 
 </div>

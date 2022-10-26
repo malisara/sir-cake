@@ -74,7 +74,7 @@ class Item(models.Model):
         self.long_category = self.SHORT_CATEGORY_TO_NAME[self.category]
 
 
-class OrderPackage(models.Model):
+class Order(models.Model):
     buyer = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=True, null=True)
     buyer_anon = models.ForeignKey(

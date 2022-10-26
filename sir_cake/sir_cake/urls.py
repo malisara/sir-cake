@@ -35,8 +35,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),
 
     path('store/', store_views.store, name="store"),
-    path('continue-purchase/', store_views.continue_purchase,
-         name="continue_purchase"),
+    path('choose-purchasing-mode/', store_views.choose_purchasing_mode,
+         name="choose_purchasing_mode"),
 ]
 
 if settings.DEBUG:

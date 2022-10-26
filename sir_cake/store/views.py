@@ -3,32 +3,25 @@ from django.shortcuts import render, redirect
 from seller.models import Item
 from sir_cake.utils import all_products_context
 from .models import AnonymousUser
-from .utils import add_one_item_basket
+from .utils import add_one_item_to_basket, anonymous_user_without_session
 
 
 def store(request):
-    context = all_products_context(request)
-    context['all_categories'] = Item.CATEGORIES_CHOICES
-
-    if request.method == "GET":
-        category_short = request.GET.get('category')
-        if category_short is not None:
-            category = Item.SHORT_CATEGORY_TO_NAME[category_short]
-            context['category'] = category
-        else:
-            context['category'] = 'All sweets'
-    else:
-        redirect_or_none = add_one_item_basket(request, context)
+    if request.method == "POST":
+        redirect_or_none = add_one_item_to_basket(request)
         if redirect_or_none is not None:
             return redirect(redirect_or_none)
+
+    context = all_products_context(request)
+    context['all_categories'] = Item.CATEGORIES_CHOICES
     return render(request, 'store/store.html', context)
 
 
-def continue_purchase(request):  # choose if you'll continue with/-out login
+def choose_purchasing_mode(request):
     if request.method == 'POST':
-        if not request.session.session_key:
+        if anonymous_user_without_session(request):
             request.session.create()
             AnonymousUser.objects.create(
                 session_id=request.session.session_key)
         return redirect('store')
-    return render(request, 'store/continue-purchase.html')
+    return render(request, 'store/choose_purchasing_mode.html')
