@@ -3,12 +3,13 @@ from django.shortcuts import render, redirect
 from seller.models import Item
 from sir_cake.utils import all_products_context
 from .models import AnonymousUser
-from .utils import add_one_item_to_basket, anonymous_user_without_session
+from .utils import (add_one_item_to_basket_or_redirect,
+                    anonymous_user_without_session)
 
 
 def store(request):
     if request.method == "POST":
-        redirect_or_none = add_one_item_to_basket(request)
+        redirect_or_none = add_one_item_to_basket_or_redirect(request)
         if redirect_or_none is not None:
             return redirect(redirect_or_none)
 

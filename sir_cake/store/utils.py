@@ -6,7 +6,8 @@ from users.models import AnonymousUser
 from .models import BasketItem
 
 
-def add_one_item_to_basket(request):
+def add_one_item_to_basket_or_redirect(request):
+    # This function is only called with POST requests
 
     if anonymous_user_without_session(request):
         return 'choose_purchasing_mode'
@@ -23,14 +24,24 @@ def add_one_item_to_basket(request):
         num_reserved_items += basket_instance.quantity
 
     if item_to_buy.quantity - num_reserved_items <= 0:
-        messages.error(request, "Item out of stock")
+        messages.error(
+            request, "Not enough items in stock given the selected quantity")
         return 'store'
 
     if request.user.is_anonymous:
-        _add_item_to_basket_create_order_anonymous_user(
-            _get_user_with_saved_session(request), item_to_buy)
+        order = _create_and_get_order_anonymous_user(
+            _get_user_with_saved_session(request))
     else:
-        _add_item_to_basket_create_order_user(request.user, item_to_buy)
+        order = _create_and_get_order_user(request.user)
+
+    try:  # Item already in the basket -> increase quantity
+        additional_item = BasketItem.objects.get(
+            item_to_buy=item_to_buy, order=order)
+        additional_item.quantity += 1
+        additional_item.save()
+    except ObjectDoesNotExist:
+        BasketItem.objects.create(
+            item_to_buy=item_to_buy, quantity=1, order=order)
     messages.success(request, "Item added to the basket")
 
 
@@ -42,29 +53,15 @@ def _get_user_with_saved_session(request):
     return AnonymousUser.objects.get(session_id=request.session.session_key)
 
 
-def _add_item_to_basket_create_order_user(user, item):
+def _create_and_get_order_user(user):
     try:
-        order = Order.objects.get(buyer=user, status='preorder')
+        return Order.objects.get(buyer=user, status='preorder')
     except ObjectDoesNotExist:
-        order = Order.objects.create(buyer=user, status="preorder")
-
-    try:  # Item already in the basket -> increase quantity
-        additional_item = BasketItem.objects.get(item_to_buy=item, order=order)
-        additional_item.quantity += 1
-        additional_item.save()
-    except ObjectDoesNotExist:
-        BasketItem.objects.create(item_to_buy=item, quantity=1, order=order)
+        return Order.objects.create(buyer=user, status="preorder")
 
 
-def _add_item_to_basket_create_order_anonymous_user(anon_user, item):
+def _create_and_get_order_anonymous_user(anon_user):
     try:
-        order = Order.objects.get(buyer_anon=anon_user, status='preorder')
+        return Order.objects.get(buyer_anon=anon_user, status='preorder')
     except ObjectDoesNotExist:
-        order = Order.objects.create(buyer_anon=anon_user, status="preorder")
-
-    try:
-        additional_item = BasketItem.objects.get(order=order, item_to_buy=item)
-        additional_item.quantity += 1
-        additional_item.save()
-    except ObjectDoesNotExist:
-        BasketItem.objects.create(item_to_buy=item, quantity=1, order=order)
+        return Order.objects.create(buyer_anon=anon_user, status="preorder")
