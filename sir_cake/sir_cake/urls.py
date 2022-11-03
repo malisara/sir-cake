@@ -35,6 +35,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),
 
     path('store/', store_views.store, name="store"),
+    path('store/item/<int:pk>/', store_views.store_item_detail,
+         name="store_item_detail"),
     path('choose-purchasing-mode/', store_views.choose_purchasing_mode,
          name="choose_purchasing_mode"),
 ]
