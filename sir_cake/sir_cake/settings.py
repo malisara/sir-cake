@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'seller.apps.SellerConfig',
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'store.apps.StoreConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -141,4 +143,4 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
 
-LOGIN_REDIRECT_URL = 'logout'  # TODO change to store
+LOGIN_REDIRECT_URL = 'store'

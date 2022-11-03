@@ -1,0 +1,46 @@
+{% extends 'users/base-user.html' %}
+{% block content %}
+
+<form action="" method="get">
+    <ul class="nav justify-content-center">
+        {% for cat in all_categories%}
+        <li class="nav-item mt-3">
+            <a class="nav-item-text" href="{% url 'store' %}?category={{cat.0}}">{{cat.1}}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</form>
+
+<div class="container">
+    <div class="category-title-container">{{category|upper}}</div>
+    <hr>
+</div>
+
+<div class="container products-grid mt-5">
+    {% if items %}
+    {% for item in items %}
+    <!--Only show the item if inventory > 0 -->
+    {% if item.quantity > 0 %}
+    <div>
+        <a href="# 'product-detail' item.pk" class="non-link a-hover">
+            <img src="{{item.image.url}}" class="rounded-image" height="200"></img>
+            <p class="product-title-store">{{item.title|title}}</p>
+            <p class="product-price-store">{{item.price}} €</p>
+        </a>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="shopping-bag-button mt-2" value="{{item.pk}}" name="item_pk">
+                <i class="bi bi-bag-plus"> Add</i>
+            </button>
+        </form>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% else %}
+    No items
+    {% endif %}
+
+</div>
+{% include 'sir_cake/paginator.html'%}
+
+{% endblock content %}

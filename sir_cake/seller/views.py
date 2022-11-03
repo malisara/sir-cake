@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 
 from .forms import NewItemForm
 from .models import Item
-from .utils import all_products_context
+from sir_cake.utils import all_products_context
 
 
 def new_item(request):

@@ -1,9 +1,11 @@
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 from PIL import Image
 
 from .image_utils import crop_max_square
+from users.models import AnonymousUser
 
 
 class Item(models.Model):
@@ -70,3 +72,12 @@ class Item(models.Model):
 
     def assign_category_full_name(self):
         self.long_category = self.SHORT_CATEGORY_TO_NAME[self.category]
+
+
+class Order(models.Model):
+    buyer = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=True, null=True)
+    buyer_anon = models.ForeignKey(
+        AnonymousUser, on_delete=models.CASCADE, blank=True, null=True)
+    order_date = models.DateTimeField(default=timezone.now)
+    status = models.CharField(max_length=10)
