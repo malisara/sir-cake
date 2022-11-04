@@ -1,3 +1,5 @@
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect
 
 from seller.models import Item
@@ -26,3 +28,16 @@ def choose_purchasing_mode(request):
                 session_id=request.session.session_key)
         return redirect('store')
     return render(request, 'store/choose_purchasing_mode.html')
+
+
+def store_item_detail(request, pk):
+    try:
+        item = Item.objects.get(id=pk)
+    except ObjectDoesNotExist:
+        return HttpResponseNotFound()
+
+    if request.method == 'POST':
+        redirect_or_none = add_one_item_to_basket_or_redirect(request)
+        if redirect_or_none != None:
+            return redirect(redirect_or_none)
+    return render(request, 'store/store-item-detail.html', {'item': item})

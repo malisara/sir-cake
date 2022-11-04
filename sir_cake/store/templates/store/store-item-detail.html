@@ -1,0 +1,25 @@
+{% extends 'users/base-user.html' %}
+
+{% block content %}
+
+<div class="container detail-item-containter">
+    <a href="{% url 'store' %}">
+        <i class="bi bi-arrow-left go-back-icon"></i>
+    </a>
+
+    <div class="image-detail"><img src="{{item.image.url}}"></img></div>
+    <div class=info-div-detail>
+        <div class="detail-category">{{item.long_category}}</div>
+        <div class="detail-title">{{item.title}}</div>
+        <div class="detail-price">{{item.price}}€</div>
+        <div class="detail-description">{{item.description}}</div>
+
+        <form action="" method="post">
+            {% csrf_token %}
+            <button class="detail-button" type="submit" value="{{item.pk}}" name="item_pk">Add to basket</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

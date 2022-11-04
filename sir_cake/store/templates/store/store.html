@@ -22,7 +22,7 @@
     <!--Only show the item if inventory > 0 -->
     {% if item.quantity > 0 %}
     <div>
-        <a href="# 'product-detail' item.pk" class="non-link a-hover">
+        <a href="{% url 'store_item_detail' item.pk %}" class="non-link a-hover">
             <img src="{{item.image.url}}" class="rounded-image" height="200"></img>
             <p class="product-title-store">{{item.title|title}}</p>
             <p class="product-price-store">{{item.price}} €</p>
