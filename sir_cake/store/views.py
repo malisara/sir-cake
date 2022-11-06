@@ -70,14 +70,14 @@ def shopping_bag(request):
                                f"Item {bag_item.item_to_buy} out of stock.")
         context['zip_bag_form'] = zip(shopping_bag, forms)
 
-    if request.method == "POST":
-        if request.POST['action'] == "pay":
-            _change_basket_item_quantity(request, preorder)
-        else:
-            BasketItem.objects.filter(order=preorder).delete()
-            preorder.delete()
-            messages.success(request, "Your shopping bag is deleted")
-            return redirect('store')
+        if request.method == "POST":
+            if request.POST['action'] == "pay":
+                _change_basket_item_quantity(request, preorder)
+            else:
+                BasketItem.objects.filter(order=preorder).delete()
+                preorder.delete()
+                messages.success(request, "Your shopping bag is deleted")
+                return redirect('store')
 
     return render(request, 'store/shopping-bag.html', context)
 
@@ -94,8 +94,8 @@ def _change_basket_item_quantity(request, preorder):
 def _get_max_quantity_to_buy(bag_item):
     item = bag_item.item_to_buy
     num_reserved_items = 0
-    for basket_instance in BasketItem.objects.filter(item_to_buy=item):
-        num_reserved_items += basket_instance.quantity
+    for basket_item in BasketItem.objects.filter(item_to_buy=item):
+        num_reserved_items += basket_item.quantity
     return item.quantity - num_reserved_items + bag_item.quantity
 
 

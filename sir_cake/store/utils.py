@@ -30,7 +30,7 @@ def add_one_item_to_basket_or_redirect(request):
 
     if request.user.is_anonymous:
         order = _create_and_get_order_anonymous_user(
-            _get_user_with_saved_session(request))
+            get_user_with_saved_session(request))
     else:
         order = _create_and_get_order_user(request.user)
 
@@ -49,7 +49,7 @@ def anonymous_user_without_session(request):
     return request.session.session_key is None
 
 
-def _get_user_with_saved_session(request):
+def get_user_with_saved_session(request):
     return AnonymousUser.objects.get(session_id=request.session.session_key)
 
 

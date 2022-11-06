@@ -144,7 +144,11 @@ body {
     color: var(--semi-pink);
 }
 
-.post-button-grid:hover {
+.post-button-grid:hover,
+.delele-basket-button:hover,
+.active,
+.sidebar a:hover,
+.anon-user-button:hover {
     background-color: var(--semi-pink);
     color: #FFFFFF;
 }
@@ -179,17 +183,6 @@ body {
     color: black;
     padding: 16px;
     text-decoration: none;
-}
-
-.active {
-    background-color: var(--semi-pink);
-    color: #FFFFFF;
-}
-
-
-.sidebar a:hover {
-    background-color: var(--semi-pink);
-    color: #FFFFFF;
 }
 
 /* On screens that are less than 700px wide, make the sidebar into a topbar */
@@ -521,7 +514,8 @@ nav {
 }
 
 .navbar-icon:hover,
-.navbar-icon-bg-fill:hover {
+.navbar-icon-bg-fill:hover,
+.support-text-link {
     color: var(--semi-pink);
 }
 
@@ -667,7 +661,88 @@ nav {
     width: 100%;
 }
 
-.anon-user-button:hover {
-    background-color: var(--semi-pink);
-    color: #FFFFFF;
+/* Shopping bag*/
+
+.basket-grid-container {
+    margin-top: 2rem;
+    margin-right: 2rem;
+    padding: 1rem;
+    border: solid 1px;
+    border-color: var(--border-color);
+    border-radius: 4px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 2fr;
+    grid-template-areas:
+        "image title quantity price";
+}
+
+.bag-item-image {
+    grid-area: image;
+    justify-self: center;
+    align-self: center;
+}
+
+.bag-item-title {
+    grid-area: title;
+    justify-self: center;
+    align-self: center;
+}
+
+.bag-item-quantity {
+    grid-area: quantity;
+    justify-self: center;
+    align-self: center;
+}
+
+.bag-item-price {
+    grid-area: price;
+    justify-self: center;
+    align-self: center;
+}
+
+.delele-basket-button {
+    height: 3rem;
+    border-radius: 10px;
+    background-color: transparent;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    color: var(--semi-pink);
+    text-align: center;
+    padding: 0.5rem;
+    margin-top: 3rem;
+    border-color: var(--semi-pink);
+    border: solid 1px;
+    margin-right: 0.5rem;
+}
+
+.support-text-link:hover {
+    text-decoration: none;
+    color: var(--semi-pink);
+    opacity: 0.8;
+}
+
+.support-text {
+    font-family: 'Lato';
+    color: rgb(56, 56, 56);
+    font-size: 1.2rem;
+}
+
+#id_quantity {
+    color: black;
+}
+
+/*Hide input arrows*/
+/*From: https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp*/
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    text-align: center;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+    text-align: center;
 }
