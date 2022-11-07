@@ -678,24 +678,24 @@ nav {
 
 .bag-item-image {
     grid-area: image;
-    justify-self: center;
-    align-self: center;
 }
 
 .bag-item-title {
     grid-area: title;
-    justify-self: center;
-    align-self: center;
 }
 
 .bag-item-quantity {
     grid-area: quantity;
-    justify-self: center;
-    align-self: center;
 }
 
 .bag-item-price {
     grid-area: price;
+}
+
+.bag-item-image,
+.bag-item-title,
+.bag-item-quantity,
+.bag-item-price {
     justify-self: center;
     align-self: center;
 }
@@ -745,4 +745,87 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
     text-align: center;
+}
+
+
+/* Pyment steps */
+
+.shipping-container {
+    display: grid;
+    grid-template-columns: 5fr 2fr 1fr 2fr 1fr 2fr 4fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+        ". basket-step-text . shipping-step-text . payment-step-text . time-basket"
+        ". basket-step arrow shipping-step arrow-2 payment-step . .";
+    margin-top: 2rem;
+}
+
+.basket-step-text {
+    grid-area: basket-step-text;
+}
+
+.shipping-step-text {
+    grid-area: shipping-step-text;
+}
+
+.payment-step-text {
+    grid-area: payment-step-text;
+}
+
+.time-basket {
+    grid-area: time-basket;
+    padding: 1rem;
+    border-radius: 5px;
+    font-family: 'Lato', sans-serif;
+    background-color: var(--light-beige);
+}
+
+.basket-step-text,
+.shipping-step-text,
+.payment-step-text {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    color: var(--gray-text);
+    justify-self: center;
+}
+
+.basket-step {
+    grid-area: basket-step;
+}
+
+.shipping-step {
+    grid-area: shipping-step;
+}
+
+.payment-step {
+    grid-area: payment-step;
+}
+
+.basket-step,
+.arrow,
+.shipping-step,
+.arrow-2,
+.payment-step {
+    justify-self: center;
+}
+
+.blue-dot {
+    color: rgb(122, 162, 236);
+}
+
+.green-dot {
+    color: rgb(115, 228, 115);
+}
+
+.gray-dot {
+    color: rgb(160, 160, 160);
+}
+
+.arrow {
+    grid-area: arrow;
+}
+
+.arrow-2 {
+    grid-area: arrow-2;
 }

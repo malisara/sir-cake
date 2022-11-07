@@ -55,7 +55,8 @@ def shopping_bag(request):
             request)
     else:
         shopping_bag, preorder = _get_shopping_bag_preorder_user(request)
-    context = {'shopping_bag': shopping_bag}
+    context = {'shopping_bag': shopping_bag,
+               'step': 1}
 
     if shopping_bag is not None:
         # Add max quantity to forms
