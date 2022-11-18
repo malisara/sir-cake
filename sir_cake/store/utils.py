@@ -6,50 +6,69 @@ from users.models import AnonymousUser
 from .models import BasketItem
 
 
-def add_one_item_to_basket_or_redirect(request):
+def add_items_to_basket_or_redirect(request):
     # This function is only called with POST requests
-
     if anonymous_user_without_session(request):
         return 'choose_purchasing_mode'
-
     try:
         item_to_buy = Item.objects.get(id=request.POST.get('item_pk'))
     except ObjectDoesNotExist:
         messages.error(request, "Item does not exist")
         return 'store'
 
-    # Check how many items are 'reserved'
-    num_reserved_items = 0
-    for basket_instance in BasketItem.objects.filter(item_to_buy=item_to_buy):
-        num_reserved_items += basket_instance.quantity
+    available_quantity = item_to_buy.quantity - \
+        get_number_reserved_items_in_preorders(item_to_buy)
+    return _add_more_items_to_basket(request, item_to_buy, available_quantity)
 
-    if item_to_buy.quantity - num_reserved_items <= 0:
-        messages.error(
-            request, "Not enough items in stock given the selected quantity")
-        return 'store'
 
+def _get_order(request):
     if request.user.is_anonymous:
-        order = _create_and_get_order_anonymous_user(
-            get_user_with_saved_session(request))
+        return _create_and_get_order_anonymous_user(
+            anonymous_user_with_saved_session(request))
     else:
-        order = _create_and_get_order_user(request.user)
+        return _create_and_get_order_user(request.user)
 
-    try:  # Item already in the basket -> increase quantity
-        additional_item = BasketItem.objects.get(
+
+def _add_more_items_to_basket(request, item_to_buy,
+                              available_quantity):
+
+    quantity_to_buy = int(request.POST.get('quantity'))
+
+    if available_quantity == 0:
+        messages.error(request, "Item is sold out.")
+        return 'store'
+    elif available_quantity < quantity_to_buy:
+        messages.error(request, "Not enough items in store.")
+        return 'store'
+        # TODO refresh?
+
+    order = _get_order(request)
+    try:  # Item already in the basket -> change quantity
+        item_in_basket = BasketItem.objects.get(
             item_to_buy=item_to_buy, order=order)
-        additional_item.quantity += 1
-        additional_item.save()
+        item_in_basket.quantity += quantity_to_buy
+        item_in_basket.save()
     except ObjectDoesNotExist:
         BasketItem.objects.create(
-            item_to_buy=item_to_buy, quantity=1, order=order)
+            item_to_buy=item_to_buy, quantity=quantity_to_buy, order=order)
     messages.success(request, "Item added to the basket")
+    return 'store'
+    # TODO refresh?
+
+
+def get_number_reserved_items_in_preorders(item_to_buy):
+    num_reserved_items = 0
+    for basket_item in BasketItem.objects.filter(item_to_buy=item_to_buy,
+                                                 order__status='preorder'):
+        num_reserved_items += basket_item.quantity
+    return num_reserved_items
 
 
 def anonymous_user_without_session(request):
     return request.session.session_key is None
 
 
-def get_user_with_saved_session(request):
+def anonymous_user_with_saved_session(request):
     return AnonymousUser.objects.get(session_id=request.session.session_key)
 
 

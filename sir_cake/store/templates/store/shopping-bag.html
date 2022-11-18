@@ -2,7 +2,7 @@
 
 {% block content %}
 
-{% if shopping_bag %}
+{% if basket_items %}
 {% include 'store/payment-steps.html'%}
 
 <div class="container">
@@ -19,6 +19,8 @@
                 <input type="hidden" value="{{item.0.pk}}" id="item_pk" name="item_pk">
             </div>
             <div class="bag-item-price all-products-data-text">{{item.0.item_to_buy.price}} €</div>
+            <button class="bag-item-bin navbar-icon" type="submit" name="action" value="{{item.0.pk}}"><i
+                    class="bi bi-trash3"></i></button>
         </div>
         {% endfor %}
         <div class="d-flex justify-content-end">

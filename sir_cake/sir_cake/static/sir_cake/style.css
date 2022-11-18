@@ -119,7 +119,6 @@ body {
 }
 
 #id_title,
-#id_quantity,
 #id_price,
 #id_inventory,
 #id_category {
@@ -226,6 +225,14 @@ body {
     margin-top: 4rem;
     padding: 1rem;
     display: flex;
+}
+
+.item_quantity_form {
+    width: 70px;
+    height: 2.8rem;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 3rem;
 }
 
 .image-detail {
@@ -671,9 +678,9 @@ nav {
     border-color: var(--border-color);
     border-radius: 4px;
     display: grid;
-    grid-template-columns: 1fr 2fr 2fr 2fr;
+    grid-template-columns: 1fr 2fr 2fr 2fr 1fr;
     grid-template-areas:
-        "image title quantity price";
+        "image title quantity price bin";
 }
 
 .bag-item-image {
@@ -692,10 +699,17 @@ nav {
     grid-area: price;
 }
 
+.bag-item-bin {
+    grid-area: bin;
+    background-color: #FFFFFF;
+    border: #FFFFFF;
+}
+
 .bag-item-image,
 .bag-item-title,
 .bag-item-quantity,
-.bag-item-price {
+.bag-item-price,
+.bag-item-bin {
     justify-self: center;
     align-self: center;
 }
@@ -729,6 +743,10 @@ nav {
 
 #id_quantity {
     color: black;
+    height: 2.5rem;
+    width: 5rem;
+    border-radius: 2px;
+
 }
 
 /*Hide input arrows*/
