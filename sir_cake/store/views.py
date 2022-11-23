@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, redirect
 
 from seller.models import Item, Order
@@ -56,37 +56,64 @@ def shopping_bag(request):
     if anonymous_user_without_session(request):
         return redirect('choose_purchasing_mode')
 
-    preorder = _get_preorder(request)
     context = {'step': 1}
+    preorder = _get_preorder(request)
 
-    if preorder is not None:
-        basket_items = BasketItem.objects.filter(order=preorder)
+    if preorder is None:
+        # Shopping bag is empty.
+        return render(request, 'store/shopping-bag.html', context)
 
-        # Add max quantity to forms
-        forms = []
-        for basket_item in basket_items:
-            max_quantity_to_buy = _get_max_quantity_to_buy(basket_item)
-            forms.append(BasketItemForm(
-                max_quantity_to_buy, instance=basket_item))
+    if request.method == "POST":
+        if "action" not in request.POST:
+            return HttpResponseBadRequest()
+        if request.POST['action'] not in ["pay", "cancel"] and \
+                not request.POST['action'].startswith("delete_"):
+            return HttpResponseBadRequest()
 
-        context['zip_bag_form'] = zip(basket_items, forms)
+    if request.method == "POST" and request.POST['action'].startswith("delete"):
+        # Single item is deleted.
+        try:
+            delete_pk = int(request.POST.get('action').split('_')[1])
+        except ValueError:
+            return HttpResponseBadRequest()
+        BasketItem.objects.get(id=delete_pk).delete()
+        messages.success(request, "Item deleted")
 
-        if request.method == "POST":
-            if request.POST['action'] == "pay":
-                _change_basket_item_quantity(request, preorder)
-            elif request.POST['action'] == "cancel":
-                BasketItem.objects.filter(order=preorder).delete()
-                preorder.delete()
-                messages.success(request, "Your shopping bag is deleted")
-                return redirect('store')
-            else:  # delete one item in basket
-                item_pk = request.POST.get('action')
-                BasketItem.objects.get(id=item_pk).delete()
-                messages.success(request, "Item deleted")
-                return redirect('shopping_bag')
-    else:
-        basket_items = None
-    context['basket_items'] = basket_items
+    basket_items = BasketItem.objects.filter(order=preorder)
+
+    if request.method == "POST" and request.POST['action'] == "cancel":
+        # Whole basket is deleted.
+        basket_items.delete()
+        preorder.delete()
+        messages.success(request, "Your shopping bag is deleted")
+        return redirect('store')
+
+    if request.method == "POST" and request.POST['action'] == "pay":
+        if "quantity" in request.POST and \
+                len(request.POST.getlist('quantity')) == len(basket_items):
+            quantities = request.POST.getlist('quantity')
+        else:
+            return HttpResponseBadRequest()
+
+    forms = []
+    for i, basket_item in enumerate(basket_items):
+        max_quantity = _get_max_quantity_to_buy(basket_item)
+        if request.method == "POST" and request.POST['action'] == "pay":
+            forms.append(BasketItemForm(max_quantity,
+                                        data={'quantity': quantities[i]},
+                                        instance=basket_item))
+        else:
+            forms.append(BasketItemForm(max_quantity, instance=basket_item))
+
+    if request.method == "POST" and request.POST['action'] == "pay":
+        # Proceed to checkout.
+        for form in forms:
+            if form.is_valid():
+                form.save()
+        # TODO: redirect to checkout.
+        return redirect('store')
+
+    context['items_and_forms'] = list(zip(basket_items, forms))
     return render(request, 'store/shopping-bag.html', context)
 
 
@@ -106,20 +133,3 @@ def _get_max_quantity_to_buy(user_basket_item):
     user_item = user_basket_item.item_to_buy
     num_reserved_items = get_number_reserved_items_in_preorders(user_item)
     return user_item.quantity - num_reserved_items + user_basket_item.quantity
-
-
-def _change_basket_item_quantity(request, preorder):
-    items_pk = request.POST.getlist('item_pk')
-    quantities_to_buy = request.POST.getlist('quantity')
-    for item_pk, quantity_to_buy in zip(items_pk, quantities_to_buy):
-        basket_item = BasketItem.objects.get(id=item_pk, order=preorder)
-
-        if basket_item.item_to_buy.quantity - \
-                get_number_reserved_items_in_preorders(basket_item) + \
-                basket_item.quantity >= quantity_to_buy:
-            basket_item.quantity = quantity_to_buy
-            basket_item.save()
-        else:
-            messages.error(
-                request,
-                f"Not enough '{basket_item.item_to_buy}' items in store.")

@@ -1,6 +1,8 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
+
 from .models import BasketItem
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class BasketItemForm(forms.ModelForm):
@@ -8,14 +10,20 @@ class BasketItemForm(forms.ModelForm):
         model = BasketItem
         fields = ['quantity']
 
-    def __init__(self, inventory, *args, **kwargs):
+    def __init__(self, max_quantity, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.max_quantity = max_quantity
         # Hide field label
         self.fields['quantity'].label = ""
         self.fields['quantity'].validators = [
-            MinValueValidator(1), MaxValueValidator(inventory)]
-        self.fields['quantity'].widget.attrs['placeholder'] = 'quantity'
+            MinValueValidator(1), MaxValueValidator(max_quantity)]
+        self.fields['quantity'].widget.attrs['value'] = 1
         # HTML validators
-        self.fields['quantity'].widget.attrs['min'] = '1'
-        self.fields['quantity'].widget.attrs['max'] = f'{inventory}'
-#        widget=forms.TextInput(attrs={'placeholder': 'Search'}
+        self.fields['quantity'].widget.attrs['min'] = 1
+        self.fields['quantity'].widget.attrs['max'] = max_quantity
+
+    def clean_quantity(self):
+        data = self.cleaned_data['quantity']
+        if self.max_quantity < data:
+            raise ValidationError("Not enough items in stock.")
+        return data

@@ -2,24 +2,22 @@
 
 {% block content %}
 
-{% if basket_items %}
+{% if items_and_forms %}
 {% include 'store/payment-steps.html'%}
 
 <div class="container">
 
     <form method="post">
-        {% for item in zip_bag_form %}
+        {% csrf_token %}
+        {% for item, form in items_and_forms %}
         <div class="basket-grid-container">
-            <div class="bag-item-image"><img src="{{item.0.item_to_buy.image.url}}" height="120px;"></div>
-            <div class="bag-item-title all-products-data-text">{{item.0.item_to_buy.title}}</div>
+            <div class="bag-item-image"><img src="{{item.item_to_buy.image.url}}" height="120px;"></div>
+            <div class="bag-item-title all-products-data-text">{{item.item_to_buy.title}}</div>
             <div class="bag-item-quantity all-products-data-text">
-                {% csrf_token %}
-                <!--quantity field-->
-                {{item.1}}
-                <input type="hidden" value="{{item.0.pk}}" id="item_pk" name="item_pk">
+                {{form}}
             </div>
-            <div class="bag-item-price all-products-data-text">{{item.0.item_to_buy.price}} €</div>
-            <button class="bag-item-bin navbar-icon" type="submit" name="action" value="{{item.0.pk}}"><i
+            <div class="bag-item-price all-products-data-text">{{item.item_to_buy.price}} €</div>
+            <button class="bag-item-bin navbar-icon" type="submit" name="action" value="delete_{{item.pk}}"><i
                     class="bi bi-trash3"></i></button>
         </div>
         {% endfor %}
@@ -29,17 +27,16 @@
         </div>
     </form>
 
-    <!--empty bag text-->
-    {% else %}
-    <div class="container mt-5 d-flex justify-content-center">
-        <div class="support-text mt-4">Your shopping bag is empty.
-            <a href="{% url 'store' %}" class="support-text-link">
-                Add new items
-            </a>
-        </div>
-    </div>
-    {% endif %}
-
 </div>
+<!--empty bag text-->
+{% else %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="support-text mt-4">Your shopping bag is empty.
+        <a href="{% url 'store' %}" class="support-text-link">
+            Add new items
+        </a>
+    </div>
+</div>
+{% endif %}
 
 {% endblock %}
