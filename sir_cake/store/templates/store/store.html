@@ -29,7 +29,7 @@
         </a>
         <form method="post">
             {% csrf_token %}
-            <input type="hidden" type="number" name="quantity" value=1>
+            {{ form.as_hidden }}
             <button type="submit" class="shopping-bag-button mt-2" value="{{item.pk}}" name="item_pk">
                 <i class="bi bi-bag-plus"> Add</i>
             </button>

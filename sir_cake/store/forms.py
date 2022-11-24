@@ -15,14 +15,17 @@ class BasketItemForm(forms.ModelForm):
         self.max_quantity = max_quantity
         # Hide field label
         self.fields['quantity'].label = ""
-        self.fields['quantity'].validators = [
-            MinValueValidator(1), MaxValueValidator(max_quantity)]
+        self.fields['quantity'].validators = [MinValueValidator(1)]
+        # MaxValueValidator is performed in 'clean_quantity'.
         self.fields['quantity'].widget.attrs['value'] = 1
         # HTML validators
         self.fields['quantity'].widget.attrs['min'] = 1
         self.fields['quantity'].widget.attrs['max'] = max_quantity
 
     def clean_quantity(self):
+        print(self.max_quantity)
+        if self.max_quantity <= 0:
+            raise ValidationError("Item out of stock.")
         data = self.cleaned_data['quantity']
         if self.max_quantity < data:
             raise ValidationError("Not enough items in stock.")

@@ -15,14 +15,33 @@ from .utils import (add_items_to_basket_or_redirect,
 
 
 def store(request):
-    # TODO change context
-    if request.method == "POST":
-        redirect_or_none = add_items_to_basket_or_redirect(request)
-        if redirect_or_none is not None:
-            return redirect(redirect_or_none)
-
+    form = BasketItemForm(1)
     context = all_products_context(request)
+    context['form'] = form
     context['all_categories'] = Item.CATEGORIES_CHOICES
+
+    if request.method == "POST":
+        item_pk = request.POST.get('item_pk', None)
+        if item_pk is None:
+            return HttpResponseBadRequest()
+        try:
+            item_pk = int(item_pk)
+        except ValueError:
+            return HttpResponseBadRequest()
+
+        item = _get_item(item_pk)
+        if item is None:
+            return HttpResponseBadRequest()
+
+        # We create a new form here to make sure there is a single item in
+        # stock. We only ever add a single item here.
+        post_form = BasketItemForm(_get_max_quantity_to_buy(
+            item), data={'quantity': 1})
+        redirect_ = add_items_to_basket_or_redirect(
+            request, post_form, item, 'store')
+        if redirect_ is not None:
+            return redirect(redirect_)
+
     return render(request, 'store/store.html', context)
 
 
@@ -50,6 +69,13 @@ def store_item_detail(request, pk):
             return redirect(redirect_or_none)
     return render(request, 'store/store-item-detail.html',
                   {'item': item, 'quanity_form': quanity_form})
+
+
+def _get_item(pk):
+    try:
+        return Item.objects.get(id=pk)
+    except ObjectDoesNotExist:
+        return None
 
 
 def shopping_bag(request):
@@ -97,7 +123,8 @@ def shopping_bag(request):
 
     forms = []
     for i, basket_item in enumerate(basket_items):
-        max_quantity = _get_max_quantity_to_buy(basket_item)
+        max_quantity = _get_max_quantity_to_buy_without_users_already_reserved(
+            basket_item)
         if request.method == "POST" and request.POST['action'] == "pay":
             forms.append(BasketItemForm(max_quantity,
                                         data={'quantity': quantities[i]},
@@ -129,7 +156,10 @@ def _get_preorder(request):
         return None
 
 
-def _get_max_quantity_to_buy(user_basket_item):
-    user_item = user_basket_item.item_to_buy
-    num_reserved_items = get_number_reserved_items_in_preorders(user_item)
-    return user_item.quantity - num_reserved_items + user_basket_item.quantity
+def _get_max_quantity_to_buy_without_users_already_reserved(user_basket_item):
+    return _get_max_quantity_to_buy(user_basket_item.item_to_buy) + \
+        user_basket_item.quantity
+
+
+def _get_max_quantity_to_buy(item):
+    return item.quantity - get_number_reserved_items_in_preorders(item)
