@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator
 
 from .models import BasketItem
 
@@ -23,10 +23,11 @@ class BasketItemForm(forms.ModelForm):
         self.fields['quantity'].widget.attrs['max'] = max_quantity
 
     def clean_quantity(self):
-        print(self.max_quantity)
         if self.max_quantity <= 0:
             raise ValidationError("Item out of stock.")
         data = self.cleaned_data['quantity']
         if self.max_quantity < data:
-            raise ValidationError("Not enough items in stock.")
+            raise ValidationError(
+                (f"Not enough items in stock. "
+                 "Max available quantity is {self.max_quantity}."))
         return data

@@ -16,9 +16,8 @@
 
         <form action="" method="post">
             {% csrf_token %}
-            {{quanity_form}}
-            <!-- <input class="item_quantity_form" placeholder="quantity" type="number" name="quantity">-->
-            <button class="detail-button" type="submit" value="{{item.pk}}" name="item_pk">Add to basket</button>
+            {{form}}
+            <button class="detail-button" type="submit">Add to basket</button>
         </form>
     </div>
 
