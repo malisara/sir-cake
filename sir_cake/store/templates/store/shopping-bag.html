@@ -1,0 +1,42 @@
+{% extends 'users/base-user.html' %}
+
+{% block content %}
+
+{% if items_and_forms %}
+{% include 'store/payment-steps.html'%}
+
+<div class="container">
+
+    <form method="post">
+        {% csrf_token %}
+        {% for item, form in items_and_forms %}
+        <div class="basket-grid-container">
+            <div class="bag-item-image"><img src="{{item.item_to_buy.image.url}}" height="120px;"></div>
+            <div class="bag-item-title all-products-data-text">{{item.item_to_buy.title}}</div>
+            <div class="bag-item-quantity all-products-data-text">
+                {{form}}
+            </div>
+            <div class="bag-item-price all-products-data-text">{{item.item_to_buy.price}} €</div>
+            <button class="bag-item-bin navbar-icon" type="submit" name="action" value="delete_{{item.pk}}"><i
+                    class="bi bi-trash3"></i></button>
+        </div>
+        {% endfor %}
+        <div class="d-flex justify-content-end">
+            <button class="delele-basket-button" type="submit" name="action" value="cancel">Delete basket</button>
+            <button class="detail-button" type="submit" name="action" value="pay">Proceed to Checkout</button>
+        </div>
+    </form>
+
+</div>
+<!--empty bag text-->
+{% else %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="support-text mt-4">Your shopping bag is empty.
+        <a href="{% url 'store' %}" class="support-text-link">
+            Add new items
+        </a>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

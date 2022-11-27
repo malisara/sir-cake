@@ -39,6 +39,7 @@ urlpatterns = [
          name="store_item_detail"),
     path('choose-purchasing-mode/', store_views.choose_purchasing_mode,
          name="choose_purchasing_mode"),
+    path('shopping-bag/', store_views.shopping_bag, name="shopping_bag"),
 ]
 
 if settings.DEBUG:

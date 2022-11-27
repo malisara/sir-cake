@@ -13,20 +13,20 @@
 
         {% if items_in_basket %}
         <!--TODO get N of items in all store views-->
-        <a href="#shopping bag" class="non-link link-to-nav-gray">
+        <a href="{% url 'shopping_bag' %}" class="non-link link-to-nav-gray">
             <i class="bi bi-basket3-fill navbar-icon-bg-fill">
                 <!--TODO notification-->
             </i>
         </a>
         {% else %}
-        <a href="#shopping bag" class="non-link link-to-nav-gray">
+        <a href="{% url 'shopping_bag' %}" class="non-link link-to-nav-gray">
             <i class="bi bi-basket3 navbar-icon"></i>
         </a>
         {% endif %}
     </div>
 
     <div class="container-fluid justify-content-center">
-        <a class="navbar-logo-title non-link" href="#store">Logo</a>
+        <a class="navbar-logo-title non-link" href="{% url 'store' %}">Logo</a>
     </div>
 
 </nav>

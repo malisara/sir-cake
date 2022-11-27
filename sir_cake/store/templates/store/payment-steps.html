@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-sm-2"></div>
+
+    <div class="col-sm-8">
+        <div class="shipping-container">
+            <div class="basket-step-text">My bag</div>
+            {% if step == 1 %}
+            <div class="basket-step blue-dot"><i class="bi bi-record-fill"></i></div>
+            {% else %}
+            <div class="basket-step green-dot"><i class="bi bi-record-fill"></i></div>
+            {% endif %}
+
+            <div class="arrow"><i class="bi bi-arrow-right"></i></div>
+            <div class="shipping-step-text">Shipping</div>
+
+            {% if step == 1 %}
+            <div class="shipping-step gray-dot"><i class="bi bi-record-fill"></i></div>
+            {% elif step == 2 %}
+            <div class="shipping-step blue-dot"><i class="bi bi-record-fill"></i></div>
+            {% else %}
+            <div class="shipping-step green-dot"><i class="bi bi-record-fill"></i></div>
+            {% endif %}
+
+            <div class="arrow-2"><i class="bi bi-arrow-right"></i></div>
+            <div class="payment-step-text">Payment</div>
+
+            {% if step == 3 %}
+            <div class="payment-step blue-dot"><i class="bi bi-record-fill"></i></div>
+            {% else %}
+            <div class="payment-step gray-dot"><i class="bi bi-record-fill"></i></div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!--TODO JS countdown-->
+    <div class="col-sm-2 mt-2 pt-5 d-flex justify-content-start">
+        <div class="time-basket">Basket expires in:</div>
+    </div>
+
+</div>

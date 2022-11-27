@@ -119,7 +119,6 @@ body {
 }
 
 #id_title,
-#id_quantity,
 #id_price,
 #id_inventory,
 #id_category {
@@ -144,7 +143,11 @@ body {
     color: var(--semi-pink);
 }
 
-.post-button-grid:hover {
+.post-button-grid:hover,
+.delele-basket-button:hover,
+.active,
+.sidebar a:hover,
+.anon-user-button:hover {
     background-color: var(--semi-pink);
     color: #FFFFFF;
 }
@@ -179,17 +182,6 @@ body {
     color: black;
     padding: 16px;
     text-decoration: none;
-}
-
-.active {
-    background-color: var(--semi-pink);
-    color: #FFFFFF;
-}
-
-
-.sidebar a:hover {
-    background-color: var(--semi-pink);
-    color: #FFFFFF;
 }
 
 /* On screens that are less than 700px wide, make the sidebar into a topbar */
@@ -233,6 +225,14 @@ body {
     margin-top: 4rem;
     padding: 1rem;
     display: flex;
+}
+
+.item_quantity_form {
+    width: 70px;
+    height: 2.8rem;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 3rem;
 }
 
 .image-detail {
@@ -521,7 +521,8 @@ nav {
 }
 
 .navbar-icon:hover,
-.navbar-icon-bg-fill:hover {
+.navbar-icon-bg-fill:hover,
+.support-text-link {
     color: var(--semi-pink);
 }
 
@@ -667,7 +668,182 @@ nav {
     width: 100%;
 }
 
-.anon-user-button:hover {
-    background-color: var(--semi-pink);
-    color: #FFFFFF;
+/* Shopping bag*/
+
+.basket-grid-container {
+    margin-top: 2rem;
+    margin-right: 2rem;
+    padding: 1rem;
+    border: solid 1px;
+    border-color: var(--border-color);
+    border-radius: 4px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 2fr 1fr;
+    grid-template-areas:
+        "image title quantity price bin";
+}
+
+.bag-item-image {
+    grid-area: image;
+}
+
+.bag-item-title {
+    grid-area: title;
+}
+
+.bag-item-quantity {
+    grid-area: quantity;
+}
+
+.bag-item-price {
+    grid-area: price;
+}
+
+.bag-item-bin {
+    grid-area: bin;
+    background-color: #FFFFFF;
+    border: #FFFFFF;
+}
+
+.bag-item-image,
+.bag-item-title,
+.bag-item-quantity,
+.bag-item-price,
+.bag-item-bin {
+    justify-self: center;
+    align-self: center;
+}
+
+.delele-basket-button {
+    height: 3rem;
+    border-radius: 10px;
+    background-color: transparent;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    color: var(--semi-pink);
+    text-align: center;
+    padding: 0.5rem;
+    margin-top: 3rem;
+    border-color: var(--semi-pink);
+    border: solid 1px;
+    margin-right: 0.5rem;
+}
+
+.support-text-link:hover {
+    text-decoration: none;
+    color: var(--semi-pink);
+    opacity: 0.8;
+}
+
+.support-text {
+    font-family: 'Lato';
+    color: rgb(56, 56, 56);
+    font-size: 1.2rem;
+}
+
+#id_quantity {
+    color: black;
+    height: 2.5rem;
+    width: 5rem;
+    border-radius: 2px;
+
+}
+
+/*Hide input arrows*/
+/*From: https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp*/
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    text-align: center;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+    text-align: center;
+}
+
+
+/* Pyment steps */
+
+.shipping-container {
+    display: grid;
+    grid-template-columns: 5fr 2fr 1fr 2fr 1fr 2fr 4fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+        ". basket-step-text . shipping-step-text . payment-step-text . time-basket"
+        ". basket-step arrow shipping-step arrow-2 payment-step . .";
+    margin-top: 2rem;
+}
+
+.basket-step-text {
+    grid-area: basket-step-text;
+}
+
+.shipping-step-text {
+    grid-area: shipping-step-text;
+}
+
+.payment-step-text {
+    grid-area: payment-step-text;
+}
+
+.time-basket {
+    grid-area: time-basket;
+    padding: 1rem;
+    border-radius: 5px;
+    font-family: 'Lato', sans-serif;
+    background-color: var(--light-beige);
+}
+
+.basket-step-text,
+.shipping-step-text,
+.payment-step-text {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    color: var(--gray-text);
+    justify-self: center;
+}
+
+.basket-step {
+    grid-area: basket-step;
+}
+
+.shipping-step {
+    grid-area: shipping-step;
+}
+
+.payment-step {
+    grid-area: payment-step;
+}
+
+.basket-step,
+.arrow,
+.shipping-step,
+.arrow-2,
+.payment-step {
+    justify-self: center;
+}
+
+.blue-dot {
+    color: rgb(122, 162, 236);
+}
+
+.green-dot {
+    color: rgb(115, 228, 115);
+}
+
+.gray-dot {
+    color: rgb(160, 160, 160);
+}
+
+.arrow {
+    grid-area: arrow;
+}
+
+.arrow-2 {
+    grid-area: arrow-2;
 }
