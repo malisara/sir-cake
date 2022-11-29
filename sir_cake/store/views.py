@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, redirect
@@ -6,6 +7,10 @@ from django.shortcuts import render, redirect
 from seller.models import Item, Order
 from sir_cake.utils import all_products_context
 from store.models import BasketItem
+from users.models import ShippingAddress
+from users.forms import (AnonymousUserUpdateNamesForm,
+                         ShippingAddressForm,
+                         UserUpdateNamesForm)
 from .forms import BasketItemForm
 from .models import AnonymousUser
 from .utils import (anonymous_user_without_session,
@@ -221,3 +226,92 @@ def _get_preorder_or_none(request):
             return Order.objects.get(status='preorder', buyer=request.user)
     except ObjectDoesNotExist:
         return None
+
+
+def shipping(request):
+
+    if anonymous_user_without_session(request):
+        return redirect('choose_purchasing_mode')
+
+    context = _context_my_bag_total(request)
+    instance = _get_user_adress_instance_or_none(request)
+
+    if instance is not None:
+        shipping_address_form = ShippingAddressForm(instance=instance)
+
+        if request.user.is_anonymous:
+            user = anonymous_user_with_saved_session(request)
+            update_name_form = AnonymousUserUpdateNamesForm(
+                {'name': user.name, 'last_name': user.last_name})
+        else:
+            update_name_form
+            UserUpdateNamesForm(
+                {'name': request.user.first_name, 'last_name': request.user.last_name})
+    else:
+        shipping_address_form = ShippingAddressForm()
+        if request.user.is_anonymous:
+            user = anonymous_user_with_saved_session(request)
+            update_name_form = AnonymousUserUpdateNamesForm()
+        else:
+            update_name_form = UserUpdateNamesForm()
+
+    if request.method == 'POST':
+        if request.user.is_anonymous:
+            update_name_form, shipping_address_form = retrun_shipping_forms_anon_user(
+                request, instance)
+        else:
+            update_name_form, shipping_address_form = retrun_shipping_forms_logged_user(
+                request, instance)
+
+        return redirect('store')  # TODO
+
+    context['update_name_form'] = update_name_form
+    context['shipping_add_form'] = shipping_address_form
+    context['step'] = 2
+
+    return render(request, 'store/shipping.html', context)
+
+
+def _get_user_adress_instance_or_none(request):
+    if request.user.is_anonymous:
+        try:
+            return ShippingAddress.objects.get(
+                user_anon=anonymous_user_with_saved_session(request))
+        except ObjectDoesNotExist:
+            return None
+    try:
+        return ShippingAddress.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        return None
+
+
+def _context_my_bag_total(request):
+
+    preorder = _get_preorder_or_none(request)
+    if preorder is None:
+        return None
+
+    shopping_bag = BasketItem.objects.filter(order=preorder)
+    if shopping_bag.count() == 0:
+        return None
+
+    number_items = 0
+    total_price = 0
+
+    for item in shopping_bag:
+        number_items += item.quantity
+        total_price += item.quantity * item.item_to_buy.price
+
+    return {
+        'my_bag': shopping_bag,
+        'number_products': number_items,
+        'total_price': total_price,
+    }
+
+
+def retrun_shipping_forms_anon_user():
+    pass
+
+
+def retrun_shipping_forms_logged_user():
+    pass

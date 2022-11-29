@@ -23,7 +23,7 @@ class ShippingAddressForm(forms.ModelForm):
         fields = ['street_name', 'house_number', 'city', 'country', ]
 
 
-class AnonShippingAddressForm(forms.ModelForm):
+class AnonymousUserUpdateNamesForm(forms.ModelForm):
     class Meta:
         model = AnonymousUser
         fields = ['name', 'last_name']

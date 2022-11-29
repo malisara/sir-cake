@@ -1,0 +1,86 @@
+{% extends 'users/base-user.html' %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+
+<!-- process container-->
+<!-- TODO -->
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-7">
+
+            <div class="shipping-container-grid">
+
+                <div class="register-form">
+                    <div class="payment-title-container category-title">Enter Shipping Address</div>
+
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {{update_name_form|crispy}}
+                        {{shipping_add_form|crispy}}
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="widets-button">Proceed to Payment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-sm-5">
+
+
+            {% if my_bag %}
+
+            <div class="order-summary-container">
+                <div class="payment-title-container category-title">Your items</div>
+
+                {% for item in my_bag %}
+                <div class="before_payment_basket_container">
+                    <div class="img"><img src="{{item.item_to_buy.image.url}}"></div>
+                    <div class="tit all-products-data-text">{{item.item_to_buy.title}}</div>
+                    <div class="qn all-products-data-text">
+                        {{item.quantity}}x
+                    </div>
+                    <div class="p all-products-data-text">{{item.item_to_buy.price}} €</div>
+                    <div class="sub-sum all-products-data-text">{{item.total_item_price}}€</div>
+                </div>
+                <hr>
+
+                {% endfor %}
+                <hr>
+                <div class="total-to-pay-grid-container">
+                    <div class="img total-bold-text">Total:</div>
+                    <div class="qn total-bold-text">{{number_products}}x</div>
+                    <div class="p total-bold-text">{{total_price}}€</div>
+
+                </div>
+            </div>
+            <a href="{% url 'shopping_bag' %}"><button class="widets-button">Back to basket</button></a>
+            <!--empty bag text-->
+            {% else %}
+            <div class="empty-bag-box">
+                <div class="support-text">Your shopping bag is empty.
+                    <a href="{% url 'store' %}" class="support-text-link">
+                        Add new items
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+{% endblock content %}
