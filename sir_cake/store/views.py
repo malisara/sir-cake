@@ -138,7 +138,7 @@ def shopping_bag(request):
         for form in forms:
             if form.is_valid():
                 form.save()
-        # TODO: redirect to checkout.
+                return redirect('shipping')
         return redirect('store')
 
     context['items_and_forms'] = list(zip(basket_items, forms))
@@ -229,50 +229,62 @@ def _get_preorder_or_none(request):
 
 
 def shipping(request):
-
     if anonymous_user_without_session(request):
         return redirect('choose_purchasing_mode')
 
     context = _context_my_bag_total(request)
-    instance = _get_user_adress_instance_or_none(request)
+    if context is None:
+        return render(request, 'store/shipping.html', {'no_items': True})
 
-    if instance is not None:
-        shipping_address_form = ShippingAddressForm(instance=instance)
+    context['step'] = 2
+    address_instance = _get_user_address_instance_or_none(request)
 
-        if request.user.is_anonymous:
-            user = anonymous_user_with_saved_session(request)
-            update_name_form = AnonymousUserUpdateNamesForm(
-                {'name': user.name, 'last_name': user.last_name})
-        else:
-            update_name_form
-            UserUpdateNamesForm(
-                {'name': request.user.first_name, 'last_name': request.user.last_name})
+    # User's address info already exists in the DB -> populate form with data
+    if address_instance is not None:
+        shipping_address_form = ShippingAddressForm(instance=address_instance)
+        update_name_form = _get_populated_name_form(request)
     else:
         shipping_address_form = ShippingAddressForm()
         if request.user.is_anonymous:
-            user = anonymous_user_with_saved_session(request)
             update_name_form = AnonymousUserUpdateNamesForm()
         else:
             update_name_form = UserUpdateNamesForm()
+    context['update_name_form'] = update_name_form
+    context['shipping_add_form'] = shipping_address_form
 
     if request.method == 'POST':
         if request.user.is_anonymous:
-            update_name_form, shipping_address_form = retrun_shipping_forms_anon_user(
-                request, instance)
+            valid_forms = _update_shipping_name_and_address_form_anonymous(
+                request, address_instance)
         else:
-            update_name_form, shipping_address_form = retrun_shipping_forms_logged_user(
-                request, instance)
-
-        return redirect('store')  # TODO
-
-    context['update_name_form'] = update_name_form
-    context['shipping_add_form'] = shipping_address_form
-    context['step'] = 2
-
+            valid_forms = _update_shipping_name_and_address_form_user(
+                request, address_instance)
+        if valid_forms == True:
+            return redirect('store')  # TODO redirect to the next step
     return render(request, 'store/shipping.html', context)
 
 
-def _get_user_adress_instance_or_none(request):
+def _context_my_bag_total(request):
+    preorder = _get_preorder_or_none(request)
+    if preorder is None:
+        return None
+
+    shopping_bag = BasketItem.objects.filter(order=preorder).order_by('id')
+    total_price_all_items = 0
+    zip_item_sum_price = []
+
+    for item in shopping_bag:
+        total_price_one_item = item.quantity * item.item_to_buy.price
+        total_price_all_items += total_price_one_item
+        zip_item_sum_price.append((item, total_price_one_item))
+
+    return {
+        'zip_item_sum_price': zip_item_sum_price,
+        'total_price_all_items': total_price_all_items,
+    }
+
+
+def _get_user_address_instance_or_none(request):
     if request.user.is_anonymous:
         try:
             return ShippingAddress.objects.get(
@@ -285,33 +297,71 @@ def _get_user_adress_instance_or_none(request):
         return None
 
 
-def _context_my_bag_total(request):
-
-    preorder = _get_preorder_or_none(request)
-    if preorder is None:
-        return None
-
-    shopping_bag = BasketItem.objects.filter(order=preorder)
-    if shopping_bag.count() == 0:
-        return None
-
-    number_items = 0
-    total_price = 0
-
-    for item in shopping_bag:
-        number_items += item.quantity
-        total_price += item.quantity * item.item_to_buy.price
-
-    return {
-        'my_bag': shopping_bag,
-        'number_products': number_items,
-        'total_price': total_price,
-    }
+def _get_populated_name_form(request):
+    if request.user.is_anonymous:
+        user = anonymous_user_with_saved_session(request)
+        return AnonymousUserUpdateNamesForm({'name': user.name,
+                                             'last_name': user.last_name})
+    else:
+        return UserUpdateNamesForm(
+            {'name': request.user.first_name,
+                'last_name': request.user.last_name})
 
 
-def retrun_shipping_forms_anon_user():
-    pass
+def _update_shipping_name_and_address_form_anonymous(request, address_instance):
+    shipping_address_form = _get_shipping_form_post(request, address_instance)
+    update_name_form = AnonymousUserUpdateNamesForm(
+        request.POST, instance=anonymous_user_with_saved_session(request))
+
+    if not update_name_form.is_valid() or not shipping_address_form.is_valid():
+        messages.error(request, "Invalid form data.")
+        return False
+
+    update_name_form.save()
+    if address_instance is not None:
+        shipping_address_form.save()
+    else:
+        shipping_data = shipping_address_form.save(commit=False)
+        shipping_data.user_anon = anonymous_user_with_saved_session(
+            request)
+        shipping_data.save()
+    return True
 
 
-def retrun_shipping_forms_logged_user():
-    pass
+def _get_shipping_form_post(request, address_instance):
+    if address_instance is None:
+        return ShippingAddressForm(request.POST)
+    else:
+        return ShippingAddressForm(request.POST, instance=address_instance)
+
+
+def _update_shipping_name_and_address_form_user(request, address_instance):
+    shipping_address_form = _get_shipping_form_post(request, address_instance)
+    name, last_name = _get_name_last_name_user(request)
+    update_name_form = UserUpdateNamesForm(
+        request.POST,
+        {'name': name, 'last_name': last_name})
+
+    if not update_name_form.is_valid() or not shipping_address_form.is_valid():
+        messages.error(request, "Invalid form data.")
+        return False
+
+    user = User.objects.get(id=request.user.pk)
+    user.first_name = update_name_form.cleaned_data['name']
+    user.last_name = update_name_form.cleaned_data['last_name']
+    user.save()
+
+    if address_instance is not None:
+        address_instance = shipping_address_form.save()
+    else:
+        address_instance = shipping_address_form.save(commit=False)
+        address_instance.user = request.user
+        address_instance.save()
+    return True
+
+
+def _get_name_last_name_user(request):
+    user = User.objects.get(id=request.user.id)
+    name = user.first_name
+    last_name = user.last_name
+    return (name, last_name)
