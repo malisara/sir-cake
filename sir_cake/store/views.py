@@ -302,10 +302,8 @@ def _get_populated_name_form(request):
         user = anonymous_user_with_saved_session(request)
         return AnonymousUserUpdateNamesForm({'name': user.name,
                                              'last_name': user.last_name})
-    else:
-        return UserUpdateNamesForm(
-            {'name': request.user.first_name,
-                'last_name': request.user.last_name})
+    return UserUpdateNamesForm({'name': request.user.first_name,
+                                'last_name': request.user.last_name})
 
 
 def _update_shipping_name_and_address_form_anonymous(request, address_instance):
@@ -322,8 +320,7 @@ def _update_shipping_name_and_address_form_anonymous(request, address_instance):
         shipping_address_form.save()
     else:
         shipping_data = shipping_address_form.save(commit=False)
-        shipping_data.user_anon = anonymous_user_with_saved_session(
-            request)
+        shipping_data.user_anon = anonymous_user_with_saved_session(request)
         shipping_data.save()
     return True
 
@@ -331,8 +328,7 @@ def _update_shipping_name_and_address_form_anonymous(request, address_instance):
 def _get_shipping_form_post(request, address_instance):
     if address_instance is None:
         return ShippingAddressForm(request.POST)
-    else:
-        return ShippingAddressForm(request.POST, instance=address_instance)
+    return ShippingAddressForm(request.POST, instance=address_instance)
 
 
 def _update_shipping_name_and_address_form_user(request, address_instance):

@@ -3,17 +3,8 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-
 {% if no_items %}
-<!--TODO-->
-<!--empty bag text-->
-<div class="empty-bag-box">
-    <div class="support-text">Your shopping bag is empty.
-        <a href="{% url 'store' %}" class="support-text-link">
-            Add new items
-        </a>
-    </div>
-</div>
+{% include 'store/empty-bag-text.html'%}
 {% else %}
 
 {% include 'store/payment-steps.html'%}
@@ -24,7 +15,7 @@
 
             <div class="shipping-container-grid">
                 <div class="register-form">
-                    <div class="payment-title-container category-title">
+                    <div class="payment-title-container category-title-container">
                         Enter Shipping Address</div>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
@@ -32,7 +23,7 @@
                         {{update_name_form|crispy}}
                         {{shipping_add_form|crispy}}
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="widets-button">
+                            <button type="submit" class="wide-payment-button">
                                 Proceed to Payment</button>
                         </div>
                     </form>
@@ -42,44 +33,42 @@
         </div>
         <div class="col-sm-5">
 
-
             <div class="order-summary-container">
-                <div class="payment-title-container category-title">Your items</div>
+                <div class="payment-title-container category-title-container">
+                    Your items</div>
 
                 {% for item, price in zip_item_sum_price %}
-                <div class="before_payment_basket_container">
-                    <div class="img"><img src="{{item.item_to_buy.image.url}}"></div>
-                    <div class="tit all-products-data-text">{{item.item_to_buy.title}}</div>
-                    <div class="qn all-products-data-text">
+                <div class="shipping_basket_summary_container">
+                    <div class="product_image">
+                        <img height="50px;" src="{{item.item_to_buy.image.url}}">
+                    </div>
+                    <div class="product_title all-products-data-text">
+                        {{item.item_to_buy.title}}</div>
+                    <div class="product_quantity all-products-data-text">
                         {{item.quantity}}x
                     </div>
-                    <div class="p all-products-data-text">{{item.item_to_buy.price}} €</div>
-                    <div class="sub-sum all-products-data-text">{{price}}€</div>
+                    <div class="product_price all-products-data-text">
+                        {{item.item_to_buy.price}} €</div>
+                    <div class="product_price-sum all-products-data-text">
+                        {{price}}€</div>
                 </div>
                 <hr>
 
                 {% endfor %}
                 <hr>
                 <div class="total-to-pay-grid-container">
-                    <div class="img total-bold-text">Total:</div>
-                    <div class="qn total-bold-text">{{number_products}}x</div>
-                    <!--TODO change-->
-                    <div class="p total-bold-text">{{total_price_all_items}}€</div>
-
+                    <div class="product_image total-bold-text">Total:</div>
+                    <div class="product_price total-bold-text">
+                        {{total_price_all_items}}€</div>
                 </div>
             </div>
-            <a href="{% url 'shopping_bag' %}"><button class="widets-button">Back to basket</button></a>
-
-
-            {% endif %}
+            <a href="{% url 'shopping_bag' %}">
+                <button class="wide-payment-button">Back to basket</button></a>
 
         </div>
     </div>
 </div>
 
-
-
-
-
+{% endif %}
 
 {% endblock content %}

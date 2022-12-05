@@ -755,6 +755,7 @@ nav {
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
+    appearance: none;
     margin: 0;
     text-align: center;
 }
@@ -762,6 +763,7 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
     text-align: center;
 }
 
@@ -846,4 +848,106 @@ input[type=number] {
 
 .arrow-2 {
     grid-area: arrow-2;
+}
+
+/* Shipping */
+
+.shipping-container-grid {
+    display: grid;
+    grid-template-areas:
+        "form";
+    margin: 2rem 0;
+    padding: 1rem 2rem;
+}
+
+.payment-title-container {
+    border-radius: 5px;
+    background-color: var(--light-beige);
+    padding: 0.7rem 0;
+    margin-top: 0.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.wide-payment-button {
+    height: 3rem;
+    border-radius: 10px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    border: solid 1px;
+    border-color: var(--semi-pink);
+    color: var(--semi-pink);
+    background-color: #FFFFFF;
+    text-align: center;
+    padding: 0.5rem;
+    margin-top: 3rem;
+    width: 100%;
+}
+
+.wide-payment-button:hover {
+    background-color: var(--semi-pink);
+    color: #FFFFFF;
+}
+
+.order-summary-container {
+    margin-top: 3rem;
+    padding: 1rem 2rem;
+    border: 1px solid;
+    border-color: var(--beige);
+    box-shadow: 15px 10px 25px var(--beige);
+}
+
+.shipping_basket_summary_container {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr 3fr 3fr;
+    grid-template-areas:
+        "product_image product_title product_quantity product_price product_price-sum";
+    margin: 1.5rem;
+    padding: 0.5rem;
+}
+
+.product_title,
+.product_quantity,
+.product_price,
+.product_price-sum {
+    justify-self: center;
+    align-self: center;
+}
+
+.product_image {
+    grid-area: product_image;
+    align-self: center;
+    margin-right: 20px;
+}
+
+.product_title {
+    grid-area: product_title;
+}
+
+.product_quantity {
+    grid-area: product_quantity;
+}
+
+.product_price {
+    grid-area: product_price;
+}
+
+.product_price-sum {
+    grid-area: product_price-sum;
+}
+
+.total-to-pay-grid-container {
+    margin: 0rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-areas:
+        "product_image . . product_price";
+    background-color: var(--light-beige);
+    padding: 1rem;
+    border-radius: 15px;
+}
+
+
+.total-bold-text {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
 }
