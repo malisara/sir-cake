@@ -5,7 +5,7 @@ from django.contrib.sessions.models import Session
 
 class AnonymousUser(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
-    name = models.CharField(max_length=40, default=None, null=True)
+    first_name = models.CharField(max_length=40, default=None, null=True)
     last_name = models.CharField(max_length=40, default=None, null=True)
 
 

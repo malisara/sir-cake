@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, redirect
@@ -242,13 +241,10 @@ def shipping(request):
     # User's address info already exists in the DB -> populate form with data
     if address_instance is not None:
         shipping_address_form = ShippingAddressForm(instance=address_instance)
-        update_name_form = _get_populated_name_form(request)
     else:
         shipping_address_form = ShippingAddressForm()
-        if request.user.is_anonymous:
-            update_name_form = AnonymousUserUpdateNamesForm()
-        else:
-            update_name_form = UserUpdateNamesForm()
+    update_name_form = _get_populated_name_form(request)
+
     context['update_name_form'] = update_name_form
     context['shipping_add_form'] = shipping_address_form
 
@@ -300,10 +296,8 @@ def _get_user_address_instance_or_none(request):
 def _get_populated_name_form(request):
     if request.user.is_anonymous:
         user = anonymous_user_with_saved_session(request)
-        return AnonymousUserUpdateNamesForm({'name': user.name,
-                                             'last_name': user.last_name})
-    return UserUpdateNamesForm({'name': request.user.first_name,
-                                'last_name': request.user.last_name})
+        return AnonymousUserUpdateNamesForm(instance=user)
+    return UserUpdateNamesForm(instance=request.user)
 
 
 def _update_shipping_name_and_address_form_anonymous(request, address_instance):
@@ -333,19 +327,13 @@ def _get_shipping_form_post(request, address_instance):
 
 def _update_shipping_name_and_address_form_user(request, address_instance):
     shipping_address_form = _get_shipping_form_post(request, address_instance)
-    name, last_name = _get_name_last_name_user(request)
-    update_name_form = UserUpdateNamesForm(
-        request.POST,
-        {'name': name, 'last_name': last_name})
+    update_name_form = UserUpdateNamesForm(request.POST, instance=request.user)
 
     if not update_name_form.is_valid() or not shipping_address_form.is_valid():
         messages.error(request, "Invalid form data.")
         return False
 
-    user = User.objects.get(id=request.user.pk)
-    user.first_name = update_name_form.cleaned_data['name']
-    user.last_name = update_name_form.cleaned_data['last_name']
-    user.save()
+    update_name_form.save()
 
     if address_instance is not None:
         address_instance = shipping_address_form.save()
@@ -354,10 +342,3 @@ def _update_shipping_name_and_address_form_user(request, address_instance):
         address_instance.user = request.user
         address_instance.save()
     return True
-
-
-def _get_name_last_name_user(request):
-    user = User.objects.get(id=request.user.id)
-    name = user.first_name
-    last_name = user.last_name
-    return (name, last_name)

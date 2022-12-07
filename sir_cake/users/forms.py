@@ -26,9 +26,15 @@ class ShippingAddressForm(forms.ModelForm):
 class AnonymousUserUpdateNamesForm(forms.ModelForm):
     class Meta:
         model = AnonymousUser
-        fields = ['name', 'last_name']
+        fields = ['first_name', 'last_name']
 
 
-class UserUpdateNamesForm(forms.Form):
-    name = forms.CharField(label='Name', max_length=40)
-    last_name = forms.CharField(label='Last name', max_length=40)
+class UserUpdateNamesForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
