@@ -28,6 +28,13 @@ class BasketItemForm(forms.ModelForm):
         data = self.cleaned_data['quantity']
         if self.max_quantity < data:
             raise ValidationError(
-                (f"Not enough items in stock. "
+                (f"Not enough items in stock."
                  "Max available quantity is {self.max_quantity}."))
         return data
+
+
+class PaymentForm(forms.Form):
+    credit_card = forms.IntegerField(label='Credit card number')
+    name = forms.CharField(label='Card holder name', max_length=15)
+    cvv = forms.IntegerField(label='CVV')
+    expire_date = forms.DateField(label='Expire date')
