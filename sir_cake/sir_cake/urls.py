@@ -41,6 +41,7 @@ urlpatterns = [
          name="choose_purchasing_mode"),
     path('shopping-bag/', store_views.shopping_bag, name="shopping_bag"),
     path('shipping/', store_views.shipping, name="shipping"),
+    path('payment/', store_views.payment, name="payment"),
 ]
 
 if settings.DEBUG:

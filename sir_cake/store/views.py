@@ -10,7 +10,7 @@ from users.models import ShippingAddress
 from users.forms import (AnonymousUserUpdateNamesForm,
                          ShippingAddressForm,
                          UserUpdateNamesForm)
-from .forms import BasketItemForm
+from .forms import BasketItemForm, PaymentForm
 from .models import AnonymousUser
 from .utils import (anonymous_user_without_session,
                     anonymous_user_with_saved_session,
@@ -109,8 +109,7 @@ def shopping_bag(request):
 
     if request.method == "POST" and request.POST['action'] == "cancel":
         # Whole basket is deleted.
-        basket_items.delete()
-        preorder.delete()
+        _delete_order_and_basket_items(preorder)
         messages.success(request, "Your shopping bag is deleted")
         return redirect('store')
 
@@ -256,7 +255,7 @@ def shipping(request):
             valid_forms = _update_shipping_name_and_address_form_user(
                 request, address_instance)
         if valid_forms == True:
-            return redirect('store')  # TODO redirect to the next step
+            return redirect('payment')
     return render(request, 'store/shipping.html', context)
 
 
@@ -342,3 +341,53 @@ def _update_shipping_name_and_address_form_user(request, address_instance):
         address_instance.user = request.user
         address_instance.save()
     return True
+
+
+def payment(request):
+    # Dummy view -> doesn't handle real payments
+    if anonymous_user_without_session(request):
+        return redirect('choose_purchasing_mode')
+
+    context = _context_my_bag_total(request)
+    if context is None:
+        return render(request, 'store/payment.html', {'no_items': True})
+
+    if _shipping_data_is_missing(request) == True:
+        messages.error(request, 'Please, enter shipping data')
+        return redirect('shipping')
+
+    preorder = _get_preorder_or_none(request)
+    context['step'] = 3
+    context['form'] = PaymentForm()
+
+    # TODO cron job
+    # When basket expires delete basket and order
+    # _delete_order_and_basket_items(preorder)
+
+    if request.method == "POST":
+        preorder.status = 'paid'
+        preorder.save()
+        basket_items = BasketItem.objects.filter(order=preorder)
+
+        for item in basket_items:  # Decrease the inventory
+            item.item_to_buy.quantity -= item.quantity
+            item.item_to_buy.save()
+
+        # TODO: redirect to success page
+
+    return render(request, 'store/payment.html', context)
+
+
+def _shipping_data_is_missing(request):
+    if request.user.is_anonymous:
+        user = anonymous_user_with_saved_session(request)
+        if ShippingAddress.objects.filter(user_anon=user).count() == 0:
+            return True
+    else:
+        if ShippingAddress.objects.filter(user=request.user).count() == 0:
+            return True
+
+
+def _delete_order_and_basket_items(order):
+    BasketItem.objects.filter(order=order).delete()
+    order.delete()
