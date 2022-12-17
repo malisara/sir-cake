@@ -1,9 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 
 from seller.models import Item, Order
-from users.models import AnonymousUser
 
 
 class BasketItem(models.Model):

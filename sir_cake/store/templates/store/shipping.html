@@ -20,8 +20,8 @@
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
 
-                        {{update_name_form|crispy}}
-                        {{shipping_add_form|crispy}}
+                        {{name_form|crispy}}
+                        {{shipping_address_form|crispy}}
                         <div class="d-flex justify-content-end">
                             <button type="submit" class="wide-payment-button">
                                 Proceed to Payment</button>

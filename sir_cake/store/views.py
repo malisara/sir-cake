@@ -11,7 +11,7 @@ from users.forms import (AnonymousUserUpdateNamesForm,
                          ShippingAddressForm,
                          UserUpdateNamesForm)
 from .forms import BasketItemForm, PaymentForm
-from .models import AnonymousUser
+from users.models import AnonymousUser
 from .utils import (anonymous_user_without_session,
                     anonymous_user_with_saved_session,
                     get_number_reserved_items_in_preorders)
@@ -168,13 +168,10 @@ def _add_items_to_basket_or_redirect(request,
         return 'choose_purchasing_mode'
 
     if not basket_item_form.is_valid():
-        errors = basket_item_form.errors.as_data().get('quantity', [])
-        for error in errors:
-            error_string = " ".join(error.messages)
-            messages.error(request, error_string)
-            # If item is out of stock, return user to 'store' view
-            if 'Item out of stock' in error_string:
-                custom_redirect = 'store'
+        error_string = _set_error_message_from_form_errors(
+            basket_item_form.errors.as_data().get('quantity', []), request)
+        if 'Item out of stock' in error_string:
+            custom_redirect = 'store'
         return custom_redirect
 
     # Add item to the basket and create Order if it doesn't exist yet
@@ -236,25 +233,19 @@ def shipping(request):
 
     context['step'] = 2
     address_instance = _get_user_address_instance_or_none(request)
+    shipping_address_form = _create_shipping_address_form(
+        request, address_instance)
+    name_form = _create_name_form(request)
 
-    # User's address info already exists in the DB -> populate form with data
-    if address_instance is not None:
-        shipping_address_form = ShippingAddressForm(instance=address_instance)
-    else:
-        shipping_address_form = ShippingAddressForm()
-    update_name_form = _get_populated_name_form(request)
-
-    context['update_name_form'] = update_name_form
-    context['shipping_add_form'] = shipping_address_form
+    context['name_form'] = name_form
+    context['shipping_address_form'] = shipping_address_form
 
     if request.method == 'POST':
-        if request.user.is_anonymous:
-            valid_forms = _update_shipping_name_and_address_form_anonymous(
-                request, address_instance)
-        else:
-            valid_forms = _update_shipping_name_and_address_form_user(
-                request, address_instance)
-        if valid_forms == True:
+        valid_form_address = _save_address_data(
+            request, shipping_address_form,
+            first_time_saving=address_instance is None)
+        valid_form_name = _save_name_data(request, name_form)
+        if valid_form_address and valid_form_name:
             return redirect('payment')
     return render(request, 'store/shipping.html', context)
 
@@ -266,20 +257,21 @@ def _context_my_bag_total(request):
 
     shopping_bag = BasketItem.objects.filter(order=preorder).order_by('id')
     total_price_all_items = 0
-    zip_item_sum_price = []
+    items_and_prices = []
 
     for item in shopping_bag:
         total_price_one_item = item.quantity * item.item_to_buy.price
         total_price_all_items += total_price_one_item
-        zip_item_sum_price.append((item, total_price_one_item))
+        items_and_prices.append((item, total_price_one_item))
 
     return {
-        'zip_item_sum_price': zip_item_sum_price,
+        'items_and_prices': items_and_prices,
         'total_price_all_items': total_price_all_items,
     }
 
 
 def _get_user_address_instance_or_none(request):
+    # Address instance is None before user makes the first successful payment
     if request.user.is_anonymous:
         try:
             return ShippingAddress.objects.get(
@@ -292,54 +284,54 @@ def _get_user_address_instance_or_none(request):
         return None
 
 
-def _get_populated_name_form(request):
-    if request.user.is_anonymous:
-        user = anonymous_user_with_saved_session(request)
-        return AnonymousUserUpdateNamesForm(instance=user)
-    return UserUpdateNamesForm(instance=request.user)
+def _create_shipping_address_form(request, address_instance):
+    if request.method == 'POST':
+        if address_instance is None:
+            return ShippingAddressForm(request.POST)
+        return ShippingAddressForm(request.POST, instance=address_instance)
+
+    else:
+        if address_instance is None:
+            return ShippingAddressForm()
+        return ShippingAddressForm(instance=address_instance)
 
 
-def _update_shipping_name_and_address_form_anonymous(request, address_instance):
-    shipping_address_form = _get_shipping_form_post(request, address_instance)
-    update_name_form = AnonymousUserUpdateNamesForm(
-        request.POST, instance=anonymous_user_with_saved_session(request))
+def _create_name_form(request):
+    if request.method == 'POST':
+        if request.user.is_anonymous:
+            user = anonymous_user_with_saved_session(request)
+            return AnonymousUserUpdateNamesForm(request.POST, instance=user)
+        return UserUpdateNamesForm(request.POST, instance=request.user)
+    else:
+        if request.user.is_anonymous:
+            user = anonymous_user_with_saved_session(request)
+            return AnonymousUserUpdateNamesForm(instance=user)
+        return UserUpdateNamesForm(instance=request.user)
 
-    if not update_name_form.is_valid() or not shipping_address_form.is_valid():
+
+def _save_address_data(request, address_form, first_time_saving):
+    if not address_form.is_valid():
         messages.error(request, "Invalid form data.")
         return False
 
-    update_name_form.save()
-    if address_instance is not None:
-        shipping_address_form.save()
-    else:
-        shipping_data = shipping_address_form.save(commit=False)
-        shipping_data.user_anon = anonymous_user_with_saved_session(request)
+    if first_time_saving:
+        shipping_data = address_form.save(commit=False)
+        if request.user.is_anonymous:
+            shipping_data.user_anon = anonymous_user_with_saved_session(
+                request)
+        else:
+            shipping_data.user = request.user
         shipping_data.save()
+    else:
+        address_form.save()
     return True
 
 
-def _get_shipping_form_post(request, address_instance):
-    if address_instance is None:
-        return ShippingAddressForm(request.POST)
-    return ShippingAddressForm(request.POST, instance=address_instance)
-
-
-def _update_shipping_name_and_address_form_user(request, address_instance):
-    shipping_address_form = _get_shipping_form_post(request, address_instance)
-    update_name_form = UserUpdateNamesForm(request.POST, instance=request.user)
-
-    if not update_name_form.is_valid() or not shipping_address_form.is_valid():
+def _save_name_data(request, name_form):
+    if not name_form.is_valid():
         messages.error(request, "Invalid form data.")
         return False
-
-    update_name_form.save()
-
-    if address_instance is not None:
-        address_instance = shipping_address_form.save()
-    else:
-        address_instance = shipping_address_form.save(commit=False)
-        address_instance.user = request.user
-        address_instance.save()
+    name_form.save()
     return True
 
 
@@ -365,17 +357,31 @@ def payment(request):
     # _delete_order_and_basket_items(preorder)
 
     if request.method == "POST":
-        preorder.status = 'paid'
-        preorder.save()
-        basket_items = BasketItem.objects.filter(order=preorder)
+        payment_form = PaymentForm(request.POST)
+        if not payment_form.is_valid():
+            errors_cvv = payment_form.errors.as_data().get('cvv', [])
+            errors_credit_card = payment_form.errors.as_data().get('credit_card', [])
+            errors = errors_cvv + errors_credit_card
+            _set_error_message_from_form_errors(errors, request)
+        else:
+            preorder.status = 'paid'
+            preorder.save()
+            basket_items = BasketItem.objects.filter(order=preorder)
+            for item in basket_items:  # Decrease the inventory
+                item.item_to_buy.quantity -= item.quantity
+                item.item_to_buy.save()
 
-        for item in basket_items:  # Decrease the inventory
-            item.item_to_buy.quantity -= item.quantity
-            item.item_to_buy.save()
-
-        # TODO: redirect to success page
+            # TODO: redirect to success page
 
     return render(request, 'store/payment.html', context)
+
+
+def _set_error_message_from_form_errors(errors, request):
+    error_string = ''
+    for error in errors:
+        error_string += " ".join(error.messages) + " "
+    messages.error(request, error_string)
+    return error_string
 
 
 def _shipping_data_is_missing(request):
