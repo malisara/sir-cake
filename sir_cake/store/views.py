@@ -323,6 +323,7 @@ def payment(request):
     if request.method == "POST":
         payment_form = PaymentForm(request.POST)
         if payment_form.is_valid():
+            preorder = _get_preorder_or_none(request)
             preorder.status = 'paid'
             preorder.save()
             basket_items = BasketItem.objects.filter(order=preorder)
@@ -348,7 +349,6 @@ def payment(request):
         messages.error(request, 'Please, enter shipping data')
         return redirect('shipping')
 
-    preorder = _get_preorder_or_none(request)
     context['step'] = 3
     context['form'] = payment_form
     return render(request, 'store/payment.html', context)
