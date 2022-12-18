@@ -250,26 +250,6 @@ def shipping(request):
     return render(request, 'store/shipping.html', context)
 
 
-def _context_my_bag_total(request):
-    preorder = _get_preorder_or_none(request)
-    if preorder is None:
-        return None
-
-    shopping_bag = BasketItem.objects.filter(order=preorder).order_by('id')
-    total_price_all_items = 0
-    items_and_prices = []
-
-    for item in shopping_bag:
-        total_price_one_item = item.quantity * item.item_to_buy.price
-        total_price_all_items += total_price_one_item
-        items_and_prices.append((item, total_price_one_item))
-
-    return {
-        'items_and_prices': items_and_prices,
-        'total_price_all_items': total_price_all_items,
-    }
-
-
 def _get_user_address_instance_or_none(request):
     # Address instance is None before user makes the first successful payment
     if request.user.is_anonymous:
@@ -340,40 +320,58 @@ def payment(request):
     if anonymous_user_without_session(request):
         return redirect('choose_purchasing_mode')
 
-    context = _context_my_bag_total(request)
-    if context is None:
-        return render(request, 'store/payment.html', {'no_items': True})
-
-    if _shipping_data_is_missing(request) == True:
-        messages.error(request, 'Please, enter shipping data')
-        return redirect('shipping')
-
-    preorder = _get_preorder_or_none(request)
-    context['step'] = 3
-    context['form'] = PaymentForm()
-
-    # TODO cron job
-    # When basket expires delete basket and order
-    # _delete_order_and_basket_items(preorder)
-
     if request.method == "POST":
         payment_form = PaymentForm(request.POST)
-        if not payment_form.is_valid():
-            errors_cvv = payment_form.errors.as_data().get('cvv', [])
-            errors_credit_card = payment_form.errors.as_data().get('credit_card', [])
-            errors = errors_cvv + errors_credit_card
-            _set_error_message_from_form_errors(errors, request)
-        else:
+        if payment_form.is_valid():
             preorder.status = 'paid'
             preorder.save()
             basket_items = BasketItem.objects.filter(order=preorder)
             for item in basket_items:  # Decrease the inventory
                 item.item_to_buy.quantity -= item.quantity
                 item.item_to_buy.save()
-
             # TODO: redirect to success page
+            return redirect('store')
+        else:
+            errors_cvv = payment_form.errors.as_data().get('cvv', [])
+            errors_credit_card = payment_form.errors.as_data().get(
+                'credit_card', [])
+            _set_error_message_from_form_errors(
+                errors_cvv + errors_credit_card, request)
+    else:
+        payment_form = PaymentForm()
 
+    context = _context_my_bag_total(request)
+    if context is None:
+        return render(request, 'store/payment.html', {'no_items': True})
+
+    if _shipping_data_is_missing(request):
+        messages.error(request, 'Please, enter shipping data')
+        return redirect('shipping')
+
+    preorder = _get_preorder_or_none(request)
+    context['step'] = 3
+    context['form'] = payment_form
     return render(request, 'store/payment.html', context)
+
+
+def _context_my_bag_total(request):
+    preorder = _get_preorder_or_none(request)
+    if preorder is None:
+        return None
+
+    shopping_bag = BasketItem.objects.filter(order=preorder).order_by('id')
+    total_price_all_items = 0
+    items_and_prices = []
+
+    for item in shopping_bag:
+        total_price_one_item = item.quantity * item.item_to_buy.price
+        total_price_all_items += total_price_one_item
+        items_and_prices.append((item, total_price_one_item))
+
+    return {
+        'items_and_prices': items_and_prices,
+        'total_price_all_items': total_price_all_items,
+    }
 
 
 def _set_error_message_from_form_errors(errors, request):
@@ -387,11 +385,9 @@ def _set_error_message_from_form_errors(errors, request):
 def _shipping_data_is_missing(request):
     if request.user.is_anonymous:
         user = anonymous_user_with_saved_session(request)
-        if ShippingAddress.objects.filter(user_anon=user).count() == 0:
-            return True
+        return ShippingAddress.objects.filter(user_anon=user).count() == 0
     else:
-        if ShippingAddress.objects.filter(user=request.user).count() == 0:
-            return True
+        return ShippingAddress.objects.filter(user=request.user).count() == 0
 
 
 def _delete_order_and_basket_items(order):
