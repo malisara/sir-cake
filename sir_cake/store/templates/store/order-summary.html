@@ -1,0 +1,28 @@
+<div class="order-summary-container">
+    <div class="payment-title-container category-title-container">
+        Your items</div>
+
+    {% for item, price in items_and_prices %}
+    <div class="shipping_basket_summary_container">
+        <div class="product_image">
+            <img height="50px;" src="{{item.item_to_buy.image.url}}">
+        </div>
+        <div class="product_title all-products-data-text">
+            {{item.item_to_buy.title}}</div>
+        <div class="product_quantity all-products-data-text">
+            {{item.quantity}}x
+        </div>
+        <div class="product_price all-products-data-text">
+            {{item.item_to_buy.price}} €</div>
+        <div class="product_price-sum all-products-data-text">
+            {{price}}€</div>
+    </div>
+    <hr>
+    {% endfor %}
+    <hr>
+    <div class="total-to-pay-grid-container">
+        <div class="product_image total-bold-text">Total:</div>
+        <div class="product_price total-bold-text">
+            {{total_price_all_items}}€</div>
+    </div>
+</div>

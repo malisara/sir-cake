@@ -1,0 +1,44 @@
+{% extends 'users/base-user.html' %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+{% if no_items %}
+{% include 'store/empty-bag-text.html'%}
+{% else %}
+
+{% include 'store/payment-steps.html'%}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-7">
+
+            <div class="shipping-container-grid">
+                <div class="register-form">
+                    <div class="payment-title-container category-title-container">
+                        Enter Payment Details</div>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{form|crispy}}
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="wide-payment-button">
+                                Confirm payment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-sm-5">
+            {% include 'store/order-summary.html'%}
+            <a href="{% url 'shipping' %}">
+                <button class="wide-payment-button">Back to shipping</button>
+            </a>
+        </div>
+
+    </div>
+    {% endif %}
+</div>
+
+{% endblock content %}

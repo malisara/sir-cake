@@ -6,8 +6,12 @@ from django.shortcuts import render, redirect
 from seller.models import Item, Order
 from sir_cake.utils import all_products_context
 from store.models import BasketItem
-from .forms import BasketItemForm
-from .models import AnonymousUser
+from users.models import ShippingAddress
+from users.forms import (AnonymousUserUpdateNamesForm,
+                         ShippingAddressForm,
+                         UserUpdateNamesForm)
+from .forms import BasketItemForm, PaymentForm
+from users.models import AnonymousUser
 from .utils import (anonymous_user_without_session,
                     anonymous_user_with_saved_session,
                     get_number_reserved_items_in_preorders)
@@ -105,8 +109,7 @@ def shopping_bag(request):
 
     if request.method == "POST" and request.POST['action'] == "cancel":
         # Whole basket is deleted.
-        basket_items.delete()
-        preorder.delete()
+        _delete_order_and_basket_items(preorder)
         messages.success(request, "Your shopping bag is deleted")
         return redirect('store')
 
@@ -133,7 +136,7 @@ def shopping_bag(request):
         for form in forms:
             if form.is_valid():
                 form.save()
-        # TODO: redirect to checkout.
+                return redirect('shipping')
         return redirect('store')
 
     context['items_and_forms'] = list(zip(basket_items, forms))
@@ -165,13 +168,10 @@ def _add_items_to_basket_or_redirect(request,
         return 'choose_purchasing_mode'
 
     if not basket_item_form.is_valid():
-        errors = basket_item_form.errors.as_data().get('quantity', [])
-        for error in errors:
-            error_string = " ".join(error.messages)
-            messages.error(request, error_string)
-            # If item is out of stock, return user to 'store' view
-            if 'Item out of stock' in error_string:
-                custom_redirect = 'store'
+        error_string = _set_error_message_from_form_errors(
+            basket_item_form.errors.as_data().get('quantity', []), request)
+        if 'Item out of stock' in error_string:
+            custom_redirect = 'store'
         return custom_redirect
 
     # Add item to the basket and create Order if it doesn't exist yet
@@ -221,3 +221,175 @@ def _get_preorder_or_none(request):
             return Order.objects.get(status='preorder', buyer=request.user)
     except ObjectDoesNotExist:
         return None
+
+
+def shipping(request):
+    if anonymous_user_without_session(request):
+        return redirect('choose_purchasing_mode')
+
+    context = _context_my_bag_total(request)
+    if context is None:
+        return render(request, 'store/shipping.html', {'no_items': True})
+
+    context['step'] = 2
+    address_instance = _get_user_address_instance_or_none(request)
+    shipping_address_form = _create_shipping_address_form(
+        request, address_instance)
+    name_form = _create_name_form(request)
+
+    context['name_form'] = name_form
+    context['shipping_address_form'] = shipping_address_form
+
+    if request.method == 'POST':
+        valid_form_address = _save_address_data(
+            request, shipping_address_form,
+            first_time_saving=address_instance is None)
+        valid_form_name = _save_name_data(request, name_form)
+        if valid_form_address and valid_form_name:
+            return redirect('payment')
+    return render(request, 'store/shipping.html', context)
+
+
+def _get_user_address_instance_or_none(request):
+    # Address instance is None before user makes the first successful payment
+    if request.user.is_anonymous:
+        try:
+            return ShippingAddress.objects.get(
+                user_anon=anonymous_user_with_saved_session(request))
+        except ObjectDoesNotExist:
+            return None
+    try:
+        return ShippingAddress.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        return None
+
+
+def _create_shipping_address_form(request, address_instance):
+    if request.method == 'POST':
+        if address_instance is None:
+            return ShippingAddressForm(request.POST)
+        return ShippingAddressForm(request.POST, instance=address_instance)
+
+    else:
+        if address_instance is None:
+            return ShippingAddressForm()
+        return ShippingAddressForm(instance=address_instance)
+
+
+def _create_name_form(request):
+    if request.method == 'POST':
+        if request.user.is_anonymous:
+            user = anonymous_user_with_saved_session(request)
+            return AnonymousUserUpdateNamesForm(request.POST, instance=user)
+        return UserUpdateNamesForm(request.POST, instance=request.user)
+    else:
+        if request.user.is_anonymous:
+            user = anonymous_user_with_saved_session(request)
+            return AnonymousUserUpdateNamesForm(instance=user)
+        return UserUpdateNamesForm(instance=request.user)
+
+
+def _save_address_data(request, address_form, first_time_saving):
+    if not address_form.is_valid():
+        messages.error(request, "Invalid form data.")
+        return False
+
+    if first_time_saving:
+        shipping_data = address_form.save(commit=False)
+        if request.user.is_anonymous:
+            shipping_data.user_anon = anonymous_user_with_saved_session(
+                request)
+        else:
+            shipping_data.user = request.user
+        shipping_data.save()
+    else:
+        address_form.save()
+    return True
+
+
+def _save_name_data(request, name_form):
+    if not name_form.is_valid():
+        messages.error(request, "Invalid form data.")
+        return False
+    name_form.save()
+    return True
+
+
+def payment(request):
+    # Dummy view -> doesn't handle real payments
+    if anonymous_user_without_session(request):
+        return redirect('choose_purchasing_mode')
+
+    if request.method == "POST":
+        payment_form = PaymentForm(request.POST)
+        if payment_form.is_valid():
+            preorder = _get_preorder_or_none(request)
+            preorder.status = 'paid'
+            preorder.save()
+            basket_items = BasketItem.objects.filter(order=preorder)
+            for item in basket_items:  # Decrease the inventory
+                item.item_to_buy.quantity -= item.quantity
+                item.item_to_buy.save()
+            # TODO: redirect to success page
+            return redirect('store')
+        else:
+            errors_cvv = payment_form.errors.as_data().get('cvv', [])
+            errors_credit_card = payment_form.errors.as_data().get(
+                'credit_card', [])
+            _set_error_message_from_form_errors(
+                errors_cvv + errors_credit_card, request)
+    else:
+        payment_form = PaymentForm()
+
+    context = _context_my_bag_total(request)
+    if context is None:
+        return render(request, 'store/payment.html', {'no_items': True})
+
+    if _shipping_data_is_missing(request):
+        messages.error(request, 'Please, enter shipping data')
+        return redirect('shipping')
+
+    context['step'] = 3
+    context['form'] = payment_form
+    return render(request, 'store/payment.html', context)
+
+
+def _context_my_bag_total(request):
+    preorder = _get_preorder_or_none(request)
+    if preorder is None:
+        return None
+
+    shopping_bag = BasketItem.objects.filter(order=preorder).order_by('id')
+    total_price_all_items = 0
+    items_and_prices = []
+
+    for item in shopping_bag:
+        total_price_one_item = item.quantity * item.item_to_buy.price
+        total_price_all_items += total_price_one_item
+        items_and_prices.append((item, total_price_one_item))
+
+    return {
+        'items_and_prices': items_and_prices,
+        'total_price_all_items': total_price_all_items,
+    }
+
+
+def _set_error_message_from_form_errors(errors, request):
+    error_string = ''
+    for error in errors:
+        error_string += " ".join(error.messages) + " "
+    messages.error(request, error_string)
+    return error_string
+
+
+def _shipping_data_is_missing(request):
+    if request.user.is_anonymous:
+        user = anonymous_user_with_saved_session(request)
+        return ShippingAddress.objects.filter(user_anon=user).count() == 0
+    else:
+        return ShippingAddress.objects.filter(user=request.user).count() == 0
+
+
+def _delete_order_and_basket_items(order):
+    BasketItem.objects.filter(order=order).delete()
+    order.delete()
