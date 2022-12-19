@@ -798,6 +798,13 @@ input[type=number] {
     border-radius: 5px;
     font-family: 'Lato', sans-serif;
     background-color: var(--light-beige);
+    border-radius: 5px;
+}
+
+#countdown {
+    font-weight: 700;
+    text-align: center;
+    margin-top: 0.2rem;
 }
 
 .basket-step-text,

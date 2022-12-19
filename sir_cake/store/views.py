@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, redirect
+from django.utils import timezone
 
 from seller.models import Item, Order
 from sir_cake.utils import all_products_context
@@ -140,6 +141,7 @@ def shopping_bag(request):
         return redirect('store')
 
     context['items_and_forms'] = list(zip(basket_items, forms))
+    context['expire_date'] = _get_basket_expire_date(preorder)
     return render(request, 'store/shopping-bag.html', context)
 
 
@@ -247,6 +249,7 @@ def shipping(request):
         valid_form_name = _save_name_data(request, name_form)
         if valid_form_address and valid_form_name:
             return redirect('payment')
+    context['expire_date'] = _get_basket_expire_date(context['preorder'])
     return render(request, 'store/shipping.html', context)
 
 
@@ -320,10 +323,10 @@ def payment(request):
     if anonymous_user_without_session(request):
         return redirect('choose_purchasing_mode')
 
+    preorder = _get_preorder_or_none(request)
     if request.method == "POST":
         payment_form = PaymentForm(request.POST)
         if payment_form.is_valid():
-            preorder = _get_preorder_or_none(request)
             preorder.status = 'paid'
             preorder.save()
             basket_items = BasketItem.objects.filter(order=preorder)
@@ -351,6 +354,7 @@ def payment(request):
 
     context['step'] = 3
     context['form'] = payment_form
+    context['expire_date'] = _get_basket_expire_date(preorder)
     return render(request, 'store/payment.html', context)
 
 
@@ -371,6 +375,7 @@ def _context_my_bag_total(request):
     return {
         'items_and_prices': items_and_prices,
         'total_price_all_items': total_price_all_items,
+        'preorder': preorder
     }
 
 
@@ -393,3 +398,9 @@ def _shipping_data_is_missing(request):
 def _delete_order_and_basket_items(order):
     BasketItem.objects.filter(order=order).delete()
     order.delete()
+
+
+def _get_basket_expire_date(preorder):
+    return timezone.make_naive(
+        (preorder.order_date +
+            timezone.timedelta(minutes=30))).strftime("%Y-%m-%d %H:%M:%S")
