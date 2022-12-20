@@ -1,5 +1,6 @@
-from django.core.exceptions import PermissionDenied
 from functools import wraps
+
+from django.core.exceptions import PermissionDenied
 
 
 def user_is_seller(function):
