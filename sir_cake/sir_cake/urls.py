@@ -29,10 +29,13 @@ urlpatterns = [
     path('all-items/', seller_views.all_items, name="all_items"),
     path('item/<int:pk>/edit/', seller_views.edit_item, name="edit_item"),
     path('item/<int:pk>/delete/', seller_views.delete_item, name="delete_item"),
+    path('orders/', seller_views.orders, name="orders"),
 
     path('register/', user_views.register, name="register"),
-    path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name="login"),
-    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),
+    path('login/', auth_views.LoginView.as_view(
+        template_name='users/login.html'), name="login"),
+    path('logout/', auth_views.LogoutView.as_view(
+        template_name='users/logout.html'), name="logout"),
 
     path('store/', store_views.store, name="store"),
     path('store/item/<int:pk>/', store_views.store_item_detail,

@@ -1,0 +1,100 @@
+{% extends 'seller/base-seller.html' %}
+
+{% block content %}
+
+<form action="" method="get" class="mt-4 mb-3">
+    <ul class="nav justify-content-center">
+        <li>
+            <a class="nav-item-text" href="{% url 'orders' %}"> ALL ORDERS</a>
+        </li>
+        <li>
+            <a class="nav-item-text" href="{% url 'orders' %}?status=UNSENT">
+                UNSENT ORDERS</a>
+        </li>
+        <li>
+            <a class="nav-item-text" href="{% url 'orders' %}?status=SHIPPED">
+                SHIPPED ORDERS</a>
+        </li>
+    </ul>
+</form>
+
+<hr>
+
+
+<div class="container mt-5">
+    <div class="category-title-container">{{order_status}} ORDERS</div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="orders-head-container  category-text">
+            <button class="button-orders" type="submit">Shipped</button>
+            <div class="username">User</div>
+            <div class="datež">Date</div>
+            <div class="username"></div>
+            <div class="price-items-order">Total Price</div>
+            <div class="status">Status</div>
+            <div class="magnifying-glass">Zoom</div>
+            <div class="pdf">Invoice</div>
+        </div>
+
+        {% for order, price in items %}
+
+        {% if order.status == 'paid' %}
+        <div class="orders-container all-products-data-text gray-bg">
+            <div class="action"> <input type="checkbox" name="checkbox" value="{{order.id}}"
+                    aria-label="Checkbox for following text input"></div>
+
+            <div class="username all-products-data-text bold">
+                {{order.buyer.first_name}} {{order.buyer.last_name}}
+            </div>
+            <div class="username all-products-data-text bold">
+                {{order.buyer_anon.first_name}} {{order.buyer_anon.last_name}}
+            </div>
+            <div class="price-items-order all-products-data-text bold">{{price}}€
+            </div>
+            <div class="date all-products-data-text bold">
+                {{order.order_date|date:"d.m.Y" }}
+            </div>
+            <div class="status all-products-data-text bold">
+                {{order.status}}
+            </div>
+
+            <a href="#order-detail order.pk " class="magnifying-glass all-products-data-text bold">
+                <i class="bi bi-search pink-link"></i></a> <!--TODO-->
+
+            <a href="#invoice_pdf order.pk" target="_blank" class="pdf all-products-data-text bold">
+                <i class="bi bi-file-pdf pink-link"></i></a> <!--TODO-->
+
+
+            {% else %} <!--Different style for shipped items-->
+            <div class="orders-container">
+                <div class="action"> <input type="checkbox" name="checkbox" value="{{order.id}}"
+                        aria-label="Checkbox for following text input"></div>
+                <div class="username all-products-data-text">
+                    {{order.buyer.first_name}} {{order.buyer.last_name}}</div>
+                <div class="username all-products-data-text">
+                    {{order.buyer_anon.first_name}} {{order.buyer_anon.last_name}}</div>
+                <div class="price-items-order all-products-data-text">{{price}}€
+                </div>
+                <div class="date all-products-data-text">
+                    {{order.order_date|date:"d.m.Y"}}
+                </div>
+                <div class="status all-products-data-text">{{order.status}}</div>
+
+                <a href="order-detail order.pk" class="magnifying-glass all-products-data-text">
+                    <i class="bi bi-search pink-link"></i> <!--TODO-->
+                </a>
+                <a href="invoice_pdf order.pk" target="_blank" class="pdf all-products-data-text">
+                    <i class="bi bi-file-pdf pink-link"></i> <!--TODO-->
+                </a>
+                {% endif %}
+
+
+            </div>
+            {% endfor %}
+    </form>
+</div>
+
+{% include 'sir_cake/paginator.html'%}
+
+{% endblock %}

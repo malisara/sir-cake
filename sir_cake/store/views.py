@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 
 from seller.models import Item, Order
+from seller.utils import total_order_price
 from sir_cake.utils import all_products_context
 from store.models import BasketItem
 from users.models import ShippingAddress
@@ -365,13 +366,13 @@ def _context_my_bag_total(preorder):
         return None
 
     shopping_bag = BasketItem.objects.filter(order=preorder).order_by('id')
-    total_price_all_items = 0
     items_and_prices = []
 
     for item in shopping_bag:
         total_price_one_item = item.quantity * item.item_to_buy.price
-        total_price_all_items += total_price_one_item
         items_and_prices.append((item, total_price_one_item))
+
+    total_price_all_items = total_order_price(shopping_bag)
 
     return {
         'items_and_prices': items_and_prices,

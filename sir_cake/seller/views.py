@@ -1,12 +1,14 @@
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import redirect, render
 
 from .decorators import user_is_seller
 from .forms import NewItemForm
-from .models import Item
-from sir_cake.utils import all_products_context
+from .models import Item, Order
+from .utils import total_order_price
+from sir_cake.utils import all_products_context, pagination
+from store.models import BasketItem
 
 
 @user_is_seller
@@ -79,3 +81,40 @@ def delete_item(request, pk):
         messages.success(request, "Item successfully deleted")
         return redirect('all_items')
     return render(request, 'seller/delete-item.html', {'item': item})
+
+
+def orders(request):
+    orders = Order.objects.exclude(
+        status='preorder').order_by('-order_date')
+
+    order_status = request.GET.get('status')
+    if order_status is None:
+        order_status = 'ALL'
+    if order_status == 'UNSENT':
+        orders = orders.filter(status='paid')
+    if order_status == 'SHIPPED':
+        orders = orders.filter(status='shipped')
+
+    orders_and_prices = []
+    for order in orders:
+        sum_price = total_order_price(BasketItem.objects.filter(order=order))
+        orders_and_prices.append((order, sum_price))
+
+    if request.method == 'POST':
+        order_ids = request.POST.getlist('checkbox')
+        for order_id in order_ids:
+            try:
+                order = Order.objects.get(id=order_id)
+            except ObjectDoesNotExist:
+                return HttpResponseBadRequest
+
+            if order.status != 'shipped':
+                order.status = 'shipped'
+                order.save()
+                messages.success(request, 'Order marked as shipped')
+        return redirect('orders')
+
+    context = {'url_name': request.resolver_match.url_name,
+               'order_status': order_status,
+               'items': pagination(request, orders_and_prices, 30)}
+    return render(request, 'seller/orders.html', context)

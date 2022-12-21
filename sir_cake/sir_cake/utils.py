@@ -23,7 +23,7 @@ def all_products_context(request):
         searched = request.GET.get('searched')
         if searched is not None and searched != "":
             items = items.filter(title__icontains=searched)
-        items = _pagination(request, items, 15)
+        items = pagination(request, items, 15)
 
     return {
         'items': items,
@@ -32,7 +32,7 @@ def all_products_context(request):
     }
 
 
-def _pagination(request, item_list, number_items_displayed):
+def pagination(request, item_list, number_items_displayed):
     paginator = Paginator(item_list, number_items_displayed)
     page_number = request.GET.get('page')
     return paginator.get_page(page_number)
