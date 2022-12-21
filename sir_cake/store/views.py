@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
@@ -229,7 +230,8 @@ def shipping(request):
     if anonymous_user_without_session(request):
         return redirect('choose_purchasing_mode')
 
-    context = _context_my_bag_total(request)
+    preorder = _get_preorder_or_none(request)
+    context = _context_my_bag_total(preorder)
     if context is None:
         return render(request, 'store/shipping.html', {'no_items': True})
 
@@ -249,7 +251,7 @@ def shipping(request):
         valid_form_name = _save_name_data(request, name_form)
         if valid_form_address and valid_form_name:
             return redirect('payment')
-    context['expire_date'] = _get_basket_expire_date(context['preorder'])
+    context['expire_date'] = _get_basket_expire_date(preorder)
     return render(request, 'store/shipping.html', context)
 
 
@@ -344,7 +346,7 @@ def payment(request):
     else:
         payment_form = PaymentForm()
 
-    context = _context_my_bag_total(request)
+    context = _context_my_bag_total(preorder)
     if context is None:
         return render(request, 'store/payment.html', {'no_items': True})
 
@@ -358,8 +360,7 @@ def payment(request):
     return render(request, 'store/payment.html', context)
 
 
-def _context_my_bag_total(request):
-    preorder = _get_preorder_or_none(request)
+def _context_my_bag_total(preorder):
     if preorder is None:
         return None
 
@@ -375,7 +376,6 @@ def _context_my_bag_total(request):
     return {
         'items_and_prices': items_and_prices,
         'total_price_all_items': total_price_all_items,
-        'preorder': preorder
     }
 
 
@@ -401,6 +401,6 @@ def _delete_order_and_basket_items(order):
 
 
 def _get_basket_expire_date(preorder):
-    return timezone.make_naive(
-        (preorder.order_date +
-            timezone.timedelta(minutes=30))).strftime("%Y-%m-%d %H:%M:%S")
+    expires_delta = timezone.timedelta(minutes=settings.BASKET_EXPIRES_MINUTES)
+    return timezone.make_naive(preorder.order_date
+                               + expires_delta).strftime("%Y-%m-%d %H:%M:%S")
