@@ -3,11 +3,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseNotFound
 from django.shortcuts import redirect, render
 
+from .decorators import user_is_seller
 from .forms import NewItemForm
 from .models import Item
 from sir_cake.utils import all_products_context
 
 
+@user_is_seller
 def new_item(request):
     if request.method == "POST":
         form = NewItemForm(request.POST, request.FILES)
@@ -24,6 +26,7 @@ def new_item(request):
     return render(request, 'seller/new_item.html', {'form': form})
 
 
+@user_is_seller
 def item_detail(request, pk):
     try:
         item = Item.objects.get(id=pk)
@@ -32,11 +35,13 @@ def item_detail(request, pk):
     return render(request, 'seller/item-detail-page.html', {'item': item})
 
 
+@user_is_seller
 def all_items(request):
     context = all_products_context(request)
     return render(request, 'seller/all_items.html', context)
 
 
+@user_is_seller
 def edit_item(request, pk):
     try:
         item = Item.objects.get(id=pk)
@@ -62,6 +67,7 @@ def edit_item(request, pk):
     return render(request, 'seller/edit-item.html', context)
 
 
+@user_is_seller
 def delete_item(request, pk):
     try:
         item = Item.objects.get(id=pk)
