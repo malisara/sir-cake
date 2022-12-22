@@ -958,3 +958,102 @@ input[type=number] {
     font-family: 'Lato', sans-serif;
     font-weight: 700;
 }
+
+/* ORDERS */
+.orders-head-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 2fr 2fr 1fr 1fr;
+    grid-template-areas:
+        "button-orders username date price-items-order status magnifying-glass pdf";
+    margin: 1.5rem;
+    padding: 0.5rem;
+    border: solid 1px;
+    border-color: var(--border-color);
+    border-radius: 4px;
+    background-color: var(--light-beige);
+    justify-items: center;
+    align-items: center;
+}
+
+.button-orders {
+    grid-area: button-orders;
+    padding: 0.3rem 1rem;
+    border-radius: 10px;
+    border: solid 1px;
+    border-color: var(--semi-pink);
+    background-color: transparent;
+    font-family: 'Roboto', sans-serif;
+    justify-self: end;
+    color: var(--semi-pink);
+}
+
+.button-orders:hover {
+    background-color: var(--semi-pink);
+    color: #FFFFFF;
+}
+
+.orders-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 2fr 2fr 1fr 1fr;
+    grid-template-areas:
+        "action username date price-items-order status magnifying-glass pdf";
+    margin: 1.5rem;
+    padding: 2rem;
+    border: solid 1px;
+    border-color: var(--border-color);
+    border-radius: 4px;
+    justify-items: center;
+    align-items: center;
+
+}
+
+.action {
+    grid-area: action;
+}
+
+.username {
+    grid-area: username;
+}
+
+.date {
+    grid-area: date;
+}
+
+.price-items-order {
+    grid-area: price-items-order;
+}
+
+
+.status {
+    grid-area: status;
+}
+
+.magnifying-glass {
+    grid-area: magnifying-glass;
+}
+
+.pdf {
+    grid-area: pdf;
+}
+
+
+.bold {
+    font-weight: 700;
+    font-style: italic;
+    color: black;
+}
+
+.gray-bg {
+    background-color: rgba(214, 214, 214, 0.274);
+}
+
+.pink-link {
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: var(--bright-pink);
+}
+
+.pink-link:hover {
+    text-decoration: none;
+    color: var(--semi-pink);
+}

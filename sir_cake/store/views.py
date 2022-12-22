@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 
 from seller.models import Item, Order
+from seller.utils import total_order_price
 from sir_cake.utils import all_products_context
 from store.models import BasketItem
 from users.models import ShippingAddress
@@ -202,26 +203,29 @@ def _create_or_get_preorder(request):
 
 def _create_or_get_preorder_anonymous_user(anon_user):
     try:
-        return Order.objects.get(buyer_anon=anon_user, status='preorder')
+        return Order.objects.get(buyer_anon=anon_user,
+                                 status=Order.Status.PREORDER)
     except ObjectDoesNotExist:
-        return Order.objects.create(buyer_anon=anon_user, status="preorder")
+        return Order.objects.create(buyer_anon=anon_user,
+                                    status=Order.Status.PREORDER)
 
 
 def _create_or_get_preorder_user(user):
     try:
-        return Order.objects.get(buyer=user, status='preorder')
+        return Order.objects.get(buyer=user, status=Order.Status.PREORDER)
     except ObjectDoesNotExist:
-        return Order.objects.create(buyer=user, status="preorder")
+        return Order.objects.create(buyer=user, status=Order.Status.PREORDER)
 
 
 def _get_preorder_or_none(request):
     try:
         if request.user.is_anonymous:
             return Order.objects.get(
-                status='preorder',
+                status=Order.Status.PREORDER,
                 buyer_anon=anonymous_user_with_saved_session(request))
         else:
-            return Order.objects.get(status='preorder', buyer=request.user)
+            return Order.objects.get(status=Order.Status.PREORDER,
+                                     buyer=request.user)
     except ObjectDoesNotExist:
         return None
 
@@ -329,7 +333,7 @@ def payment(request):
     if request.method == "POST":
         payment_form = PaymentForm(request.POST)
         if payment_form.is_valid():
-            preorder.status = 'paid'
+            preorder.status = Order.Status.PAID
             preorder.save()
             basket_items = BasketItem.objects.filter(order=preorder)
             for item in basket_items:  # Decrease the inventory
@@ -365,13 +369,13 @@ def _context_my_bag_total(preorder):
         return None
 
     shopping_bag = BasketItem.objects.filter(order=preorder).order_by('id')
-    total_price_all_items = 0
     items_and_prices = []
 
     for item in shopping_bag:
         total_price_one_item = item.quantity * item.item_to_buy.price
-        total_price_all_items += total_price_one_item
         items_and_prices.append((item, total_price_one_item))
+
+    total_price_all_items = total_order_price(shopping_bag)
 
     return {
         'items_and_prices': items_and_prices,
