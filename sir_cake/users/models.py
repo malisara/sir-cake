@@ -14,10 +14,12 @@ class ShippingAddress(models.Model):
     house_number = models.CharField(max_length=5)
     city = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, default=None, blank=True, null=True)
-    user_anon = models.ForeignKey(
-        AnonymousUser, on_delete=models.CASCADE, default=None, blank=True, null=True)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, default=None, blank=True, null=True,
+        related_name='address')
+    user_anon = models.OneToOneField(
+        AnonymousUser, on_delete=models.CASCADE,
+        default=None, blank=True, null=True, related_name='address_anon')
 
 
 class UserStatus(models.Model):

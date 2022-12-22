@@ -6,7 +6,6 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 
 from seller.models import Item, Order
-from seller.utils import total_order_price
 from sir_cake.utils import all_products_context
 from store.models import BasketItem
 from users.models import ShippingAddress
@@ -17,6 +16,7 @@ from .forms import BasketItemForm, PaymentForm
 from users.models import AnonymousUser
 from .utils import (anonymous_user_without_session,
                     anonymous_user_with_saved_session,
+                    get_items_and_prices_and_order_sum,
                     get_number_reserved_items_in_preorders)
 
 
@@ -369,18 +369,7 @@ def _context_my_bag_total(preorder):
         return None
 
     shopping_bag = BasketItem.objects.filter(order=preorder).order_by('id')
-    items_and_prices = []
-
-    for item in shopping_bag:
-        total_price_one_item = item.quantity * item.item_to_buy.price
-        items_and_prices.append((item, total_price_one_item))
-
-    total_price_all_items = total_order_price(shopping_bag)
-
-    return {
-        'items_and_prices': items_and_prices,
-        'total_price_all_items': total_price_all_items,
-    }
+    return get_items_and_prices_and_order_sum(shopping_bag)
 
 
 def _set_error_message_from_form_errors(errors, request):
