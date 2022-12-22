@@ -203,26 +203,29 @@ def _create_or_get_preorder(request):
 
 def _create_or_get_preorder_anonymous_user(anon_user):
     try:
-        return Order.objects.get(buyer_anon=anon_user, status='preorder')
+        return Order.objects.get(buyer_anon=anon_user,
+                                 status=Order.Status.PREORDER)
     except ObjectDoesNotExist:
-        return Order.objects.create(buyer_anon=anon_user, status="preorder")
+        return Order.objects.create(buyer_anon=anon_user,
+                                    status=Order.Status.PREORDER)
 
 
 def _create_or_get_preorder_user(user):
     try:
-        return Order.objects.get(buyer=user, status='preorder')
+        return Order.objects.get(buyer=user, status=Order.Status.PREORDER)
     except ObjectDoesNotExist:
-        return Order.objects.create(buyer=user, status="preorder")
+        return Order.objects.create(buyer=user, status=Order.Status.PREORDER)
 
 
 def _get_preorder_or_none(request):
     try:
         if request.user.is_anonymous:
             return Order.objects.get(
-                status='preorder',
+                status=Order.Status.PREORDER,
                 buyer_anon=anonymous_user_with_saved_session(request))
         else:
-            return Order.objects.get(status='preorder', buyer=request.user)
+            return Order.objects.get(status=Order.Status.PREORDER,
+                                     buyer=request.user)
     except ObjectDoesNotExist:
         return None
 
@@ -330,7 +333,7 @@ def payment(request):
     if request.method == "POST":
         payment_form = PaymentForm(request.POST)
         if payment_form.is_valid():
-            preorder.status = 'paid'
+            preorder.status = Order.Status.PAID
             preorder.save()
             basket_items = BasketItem.objects.filter(order=preorder)
             for item in basket_items:  # Decrease the inventory

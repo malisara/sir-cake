@@ -1,11 +1,11 @@
 from users.models import AnonymousUser
-from .models import BasketItem
+from .models import BasketItem, Order
 
 
 def get_number_reserved_items_in_preorders(item_to_buy):
     num_reserved_items = 0
-    for basket_item in BasketItem.objects.filter(item_to_buy=item_to_buy,
-                                                 order__status='preorder'):
+    for basket_item in BasketItem.objects.filter(
+            item_to_buy=item_to_buy, order__status=Order.Status.PREORDER):
         num_reserved_items += basket_item.quantity
     return num_reserved_items
 

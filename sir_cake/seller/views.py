@@ -83,38 +83,40 @@ def delete_item(request, pk):
     return render(request, 'seller/delete-item.html', {'item': item})
 
 
+@user_is_seller
 def orders(request):
+    if request.method == 'POST':
+        order_ids = request.POST.getlist('checkbox')
+        for order_id in order_ids:
+            try:
+                order = Order.objects.get(id=int(order_id))
+            except (ObjectDoesNotExist, ValueError):
+                return HttpResponseBadRequest()
+
+            if order.status != Order.Status.SHIPPED:
+                order.status = Order.Status.SHIPPED
+                order.save()
+                messages.success(request, 'Order marked as shipped')
+        return redirect('orders')
+
     orders = Order.objects.exclude(
-        status='preorder').order_by('-order_date')
+        status=Order.Status.PREORDER).order_by('-order_date')
 
     order_status = request.GET.get('status')
     if order_status is None:
-        order_status = 'ALL'
-    if order_status == 'UNSENT':
-        orders = orders.filter(status='paid')
-    if order_status == 'SHIPPED':
-        orders = orders.filter(status='shipped')
+        order_status = Order.Status.ALL
+    if order_status == Order.Status.UNSENT:
+        orders = orders.filter(status=Order.Status.PAID)
+    if order_status == Order.Status.SHIPPED:
+        orders = orders.filter(status=Order.Status.SHIPPED)
 
     orders_and_prices = []
     for order in orders:
         sum_price = total_order_price(BasketItem.objects.filter(order=order))
         orders_and_prices.append((order, sum_price))
 
-    if request.method == 'POST':
-        order_ids = request.POST.getlist('checkbox')
-        for order_id in order_ids:
-            try:
-                order = Order.objects.get(id=order_id)
-            except ObjectDoesNotExist:
-                return HttpResponseBadRequest
-
-            if order.status != 'shipped':
-                order.status = 'shipped'
-                order.save()
-                messages.success(request, 'Order marked as shipped')
-        return redirect('orders')
-
     context = {'url_name': request.resolver_match.url_name,
                'order_status': order_status,
                'items': pagination(request, orders_and_prices, 30)}
+
     return render(request, 'seller/orders.html', context)

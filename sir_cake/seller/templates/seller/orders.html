@@ -8,11 +8,11 @@
             <a class="nav-item-text" href="{% url 'orders' %}"> ALL ORDERS</a>
         </li>
         <li>
-            <a class="nav-item-text" href="{% url 'orders' %}?status=UNSENT">
+            <a class="nav-item-text" href="{% url 'orders' %}?status=unsent">
                 UNSENT ORDERS</a>
         </li>
         <li>
-            <a class="nav-item-text" href="{% url 'orders' %}?status=SHIPPED">
+            <a class="nav-item-text" href="{% url 'orders' %}?status=shipped">
                 SHIPPED ORDERS</a>
         </li>
     </ul>
@@ -22,7 +22,7 @@
 
 
 <div class="container mt-5">
-    <div class="category-title-container">{{order_status}} ORDERS</div>
+    <div class="category-title-container">{{order_status|upper}} ORDERS</div>
 
     <form method="post">
         {% csrf_token %}

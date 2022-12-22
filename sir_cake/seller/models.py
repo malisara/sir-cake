@@ -75,6 +75,14 @@ class Item(models.Model):
 
 
 class Order(models.Model):
+
+    class Status:
+        PREORDER = 'preorder'
+        PAID = 'paid'
+        SHIPPED = 'shipped'
+        UNSENT = 'unsent'
+        ALL = 'all'
+
     buyer = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=True, null=True)
     buyer_anon = models.ForeignKey(
