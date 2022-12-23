@@ -9,6 +9,7 @@ from .models import Item, Order
 from .utils import total_order_price
 from sir_cake.utils import all_products_context, pagination
 from store.models import BasketItem
+from store.utils import get_items_and_prices_and_order_sum
 
 
 @user_is_seller
@@ -93,10 +94,7 @@ def orders(request):
             except (ObjectDoesNotExist, ValueError):
                 return HttpResponseBadRequest()
 
-            if order.status != Order.Status.SHIPPED:
-                order.status = Order.Status.SHIPPED
-                order.save()
-                messages.success(request, 'Order marked as shipped')
+            _mark_order_as_shipped(request, order)
         return redirect('orders')
 
     orders = Order.objects.exclude(
@@ -120,3 +118,29 @@ def orders(request):
                'items': pagination(request, orders_and_prices, 30)}
 
     return render(request, 'seller/orders.html', context)
+
+
+@user_is_seller
+def order_detail(request, pk):
+    try:
+        order = Order.objects.exclude(status=Order.Status.PREORDER).get(id=pk)
+    except ObjectDoesNotExist:
+        return HttpResponseNotFound()
+
+    if request.method == 'POST':
+        _mark_order_as_shipped(request, order)
+        return redirect('order_detail', pk=(pk))
+
+    context = get_items_and_prices_and_order_sum(
+        BasketItem.objects.filter(order=order))
+    context['order'] = order
+    context['anonymous'] = order.buyer is None
+
+    return render(request, 'seller/order-detail.html', context)
+
+
+def _mark_order_as_shipped(request, order):
+    if order.status != Order.Status.SHIPPED:
+        order.status = Order.Status.SHIPPED
+        order.save()
+        messages.success(request, 'Order marked as shipped')

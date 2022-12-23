@@ -144,7 +144,7 @@ body {
 }
 
 .post-button-grid:hover,
-.delele-basket-button:hover,
+.delete-basket-button:hover,
 .active,
 .sidebar a:hover,
 .anon-user-button:hover {
@@ -378,6 +378,10 @@ body {
 .all-products-data-text {
     font-family: 'Lato', sans-serif;
     font-weight: 300;
+    color: #000000;
+}
+
+.all-products-data-text:hover {
     color: #000000;
 }
 
@@ -714,7 +718,7 @@ nav {
     align-self: center;
 }
 
-.delele-basket-button {
+.delete-basket-button {
     height: 3rem;
     border-radius: 10px;
     background-color: transparent;
@@ -959,7 +963,8 @@ input[type=number] {
     font-weight: 700;
 }
 
-/* ORDERS */
+/* Orders */
+
 .orders-head-container {
     display: grid;
     grid-template-columns: 1fr 2fr 2fr 2fr 2fr 1fr 1fr;
@@ -1056,4 +1061,48 @@ input[type=number] {
 .pink-link:hover {
     text-decoration: none;
     color: var(--semi-pink);
+}
+
+/* Shipping detail */
+
+.container-mini {
+    width: 40%;
+    padding: 1rem;
+    border: solid 1px;
+    border-color: var(--border-color);
+    border-radius: 4px;
+    margin-top: 2rem;
+}
+
+
+.order-detail-grid-container {
+    padding: 1.5rem 0rem;
+    border-bottom: dotted 2px;
+    border-color: var(--border-color);
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 2fr 2fr;
+    grid-template-areas:
+        "order-item-number order-title order-quantity order-price order-sum";
+    justify-items: center;
+    align-items: center;
+}
+
+.order-item-number {
+    grid-area: order-item-number;
+}
+
+.order-title {
+    grid-area: order-title;
+}
+
+.order-quantity {
+    grid-area: order-quantity;
+}
+
+.order-price {
+    grid-area: order-price;
+}
+
+.order-sum {
+    grid-area: order-sum;
 }

@@ -30,6 +30,8 @@ urlpatterns = [
     path('item/<int:pk>/edit/', seller_views.edit_item, name="edit_item"),
     path('item/<int:pk>/delete/', seller_views.delete_item, name="delete_item"),
     path('orders/', seller_views.orders, name="orders"),
+    path('order/<int:pk>/detail', seller_views.order_detail,
+         name="order_detail"),
 
     path('register/', user_views.register, name="register"),
     path('login/', auth_views.LoginView.as_view(

@@ -1,0 +1,77 @@
+{% extends 'seller/base-seller.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-sm-4 mt-4 detail-title">Order #{{order.id}}
+            <p class="detail-category">{{order.status}}</p>
+        </div>
+        <div class="col-sm-3"></div>
+        <div class="col-sm-5 container-mini d-flex justify-content-start-text">
+            <div class="col all-products-data-text bold">
+                <p>Customer: </p>
+                <p>Address: </p>
+                <p>Country: </p>
+            </div>
+
+            <div class="col">
+                {% if anonymous %}
+                <p>{{order.buyer_anon.first_name}} {{order.buyer_anon.last_name}}</p>
+                <p>{{order.buyer_anon.address_anon.street_name}}
+                    {{order.buyer_anon.address_anon.house_number}},
+                    {{order.buyer_anon.address_anon.city}}</p>
+                <p>{{order.buyer_anon.address_anon.country}}</p>
+
+                {% else %}
+
+                <p>{{order.buyer.first_name}} {{order.buyer.last_name}}</p>
+                <p>{{order.buyer.address.street_name}}
+                    {{order.buyer.address.house_number}},
+                    {{order.buyer.address.city}}</p>
+                <p>{{order.buyer.address.country}}</p>
+
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <div class="order-detail-grid-container beige-bg category-text">
+            <div class="order-item-number ">N°</div>
+            <div class="order-title">Title</div>
+            <div class="order-quantity">Quantity</div>
+            <div class="order-price">Price</div>
+            <div class="order-sum-price">Sum</div>
+        </div>
+    </div>
+
+
+    {% for item, price in items_and_prices %}
+    <a href="{%url 'item_detail' item.item_to_buy.id %}"
+        class="order-detail-grid-container non-link all-products-data-text">
+        <div class="order-item-number">1</div>
+        <div class="order-title">{{item.item_to_buy.title}}</div>
+        <div class="order-quantity">{{item.quantity}}x</div>
+        <div class="order-price">{{item.item_to_buy.price}} €</div>
+        <div class="order-sum">{{price}}€</div>
+    </a>
+    {% endfor %}
+
+    <div class="order-detail-grid-container total-bold-text">
+        <div class="order-item-number">Total:</div>
+        <div class="order-sum">{{total_price_all_items}} €</div>
+    </div>
+
+    <form method="post">
+        <div class="d-flex justify-content-end">
+            <a href="{% url 'orders' %}" class="delete-basket-button non-link">Back to orders</a>
+            {% csrf_token %}
+            <button class="detail-button" type="submit">Mark as shipped</button>
+        </div>
+    </form>
+
+</div>
+
+{% endblock content %}
