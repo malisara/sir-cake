@@ -32,6 +32,8 @@ urlpatterns = [
     path('orders/', seller_views.orders, name="orders"),
     path('order/<int:pk>/detail', seller_views.order_detail,
          name="order_detail"),
+    path('invoice/<int:pk>/',
+         seller_views.PdfInvoiceView.as_view(), name="invoice"),
 
     path('register/', user_views.register, name="register"),
     path('login/', auth_views.LoginView.as_view(
