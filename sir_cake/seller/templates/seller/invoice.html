@@ -26,7 +26,7 @@
     <tr style="margin-left: 20rem;">
         <td></td>
         <td class="text-bold">Total Amount:
-            <p class="inline-text"> {{total_price_all_items}} eur</p>
+            <p class="inline-text"> {{total_price_all_items}} €</p>
         </td>
     </tr>
 </table>
@@ -36,7 +36,7 @@
 <table>
     <tr class="text-bold">
         <td style="margin-left: 2rem;">
-            {% if anonymous %}
+            {% if anonymous_user %}
             {{order.buyer_anon.first_name}} {{order.buyer_anon.last_name}}
             <br>
             {% else %}
@@ -45,22 +45,22 @@
         </td>
     </tr>
 
-    {% if anonymous %}
-    <tr style="margin-left: 2rem;">
+    {% if anonymous_user %}
+    <tr style="margin-left: 2.5rem;">
         <td class="address"> {{order.buyer_anon.address_anon.street_name}}
             {{order.buyer_anon.address_anon.house_number}},
             {{order.buyer_anon.address_anon.city}}</td>
     </tr>
-    <tr style="margin-left: 2rem;">
+    <tr style="margin-left: 2.5rem;">
         <td class="address">{{order.buyer_anon.address_anon.country}}</td>
     </tr>
     {% else %}
-    <tr style="margin-left: 2rem;">
+    <tr style="margin-left: 2.5rem;">
         <td class="address"> {{order.buyer.address.street_name}}
             {{order.buyer.address_anon.house_number}},
             {{order.buyer.address_anon.city}}</td>
     </tr>
-    <tr style="margin-left: 2rem;">
+    <tr style="margin-left: 2.5rem;">
         <td class="address">{{order.buyer_anon.address_anon.country}}</td>
     </tr>
     {% endif %}
@@ -77,8 +77,8 @@
     <tr class="table-text">
         <td>{{item.item_to_buy.title}}</td>
         <td>{{item.quantity}}x</td>
-        <td>{{item.item_to_buy.price}} EUR</td>
-        <td>{{price}} EUR</td>
+        <td>{{item.item_to_buy.price}} €</td>
+        <td>{{price}} €</td>
         {% endfor %}
     </tr>
 </table>
@@ -88,7 +88,7 @@
         <th>Total:</th>
         <th></th>
         <th></th>
-        <th>{{total_price_all_items}} EUR</th>
+        <th>{{total_price_all_items}} €</th>
     </tr>
 </table>
 

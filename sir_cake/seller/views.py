@@ -150,14 +150,6 @@ def _mark_order_as_shipped(request, order):
         messages.success(request, 'Order marked as shipped')
 
 
-def _order_context(order):
-    context = get_items_and_prices_and_order_sum(
-        BasketItem.objects.filter(order=order))
-    context['order'] = order
-    context['anonymous'] = order.buyer is None
-    return context
-
-
 class UserIsSellerMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_staff
@@ -173,8 +165,15 @@ class PdfInvoiceView(UserIsSellerMixin, View):
         context = _order_context(order)
         context['due_date'] = order.order_date + \
             timezone.timedelta(days=settings.INVOICE_DUE_DATE_DAYS)
-        pdf = _render_pdf('seller/invoice.html', context, request)
-        return HttpResponse(pdf, content_type='application/pdf')
+        return _render_pdf('seller/invoice.html', context, request)
+
+
+def _order_context(order):
+    context = get_items_and_prices_and_order_sum(
+        BasketItem.objects.filter(order=order))
+    context['order'] = order
+    context['anonymous_user'] = order.buyer is None
+    return context
 
 
 def _render_pdf(template_source, context, request):

@@ -16,7 +16,7 @@
             </div>
 
             <div class="col">
-                {% if anonymous %}
+                {% if anonymous_user %}
                 <p>{{order.buyer_anon.first_name}} {{order.buyer_anon.last_name}}</p>
                 <p>{{order.buyer_anon.address_anon.street_name}}
                     {{order.buyer_anon.address_anon.house_number}},
