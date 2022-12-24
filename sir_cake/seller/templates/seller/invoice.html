@@ -1,0 +1,95 @@
+{% extends 'seller/pdf-style.html' %}
+
+{% block content %}
+
+<div class="invoice-title">
+    Invoice #{{order.id}}
+</div>
+
+<table>
+    <tr class="text-bold">
+        <td>
+            <div class="status">{{order.status}}</div>
+        </td>
+        <td style="margin-left: 15rem;">Order date:
+            <p class="inline-text"> {{order.order_date|date:"d.m.Y"}}</p>
+        </td>
+    </tr>
+
+    <tr style="margin-left: 20rem;">
+        <td></td>
+        <td class=" text-bold">Due date:
+            <p class="inline-text"> {{due_date|date:"d.m.Y"}}</p>
+        </td>
+    </tr>
+
+    <tr style="margin-left: 20rem;">
+        <td></td>
+        <td class="text-bold">Total Amount:
+            <p class="inline-text"> {{total_price_all_items}} €</p>
+        </td>
+    </tr>
+</table>
+
+<div class="invoice-to">Invoice to:</div>
+
+<table>
+    <tr class="text-bold">
+        <td style="margin-left: 2rem;">
+            {% if anonymous_user %}
+            {{order.buyer_anon.first_name}} {{order.buyer_anon.last_name}}
+            <br>
+            {% else %}
+            {{order.buyer.first_name}} {{order.buyer.last_name}}
+            {% endif %}
+        </td>
+    </tr>
+
+    {% if anonymous_user %}
+    <tr style="margin-left: 2.5rem;">
+        <td class="address"> {{order.buyer_anon.address_anon.street_name}}
+            {{order.buyer_anon.address_anon.house_number}},
+            {{order.buyer_anon.address_anon.city}}</td>
+    </tr>
+    <tr style="margin-left: 2.5rem;">
+        <td class="address">{{order.buyer_anon.address_anon.country}}</td>
+    </tr>
+    {% else %}
+    <tr style="margin-left: 2.5rem;">
+        <td class="address"> {{order.buyer.address.street_name}}
+            {{order.buyer.address_anon.house_number}},
+            {{order.buyer.address_anon.city}}</td>
+    </tr>
+    <tr style="margin-left: 2.5rem;">
+        <td class="address">{{order.buyer_anon.address_anon.country}}</td>
+    </tr>
+    {% endif %}
+</table>
+
+<table class="margin-top">
+    <tr class="table-header" style="background-color: #f0eceb;">
+        <th>Title</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Sum</th>
+    </tr>
+    {% for item, price in items_and_prices %}
+    <tr class="table-text">
+        <td>{{item.item_to_buy.title}}</td>
+        <td>{{item.quantity}}x</td>
+        <td>{{item.item_to_buy.price}} €</td>
+        <td>{{price}} €</td>
+        {% endfor %}
+    </tr>
+</table>
+
+<table class="table-header">
+    <tr>
+        <th>Total:</th>
+        <th></th>
+        <th></th>
+        <th>{{total_price_all_items}} €</th>
+    </tr>
+</table>
+
+{% endblock content %}

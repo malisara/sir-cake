@@ -1,7 +1,15 @@
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseBadRequest, HttpResponseNotFound
+from django.http import (HttpResponseBadRequest,
+                         HttpResponseNotFound, HttpResponse)
 from django.shortcuts import redirect, render
+from django.template.loader import get_template
+from django.utils import timezone
+from django.views import View
+from io import BytesIO
+from xhtml2pdf import pisa
 
 from .decorators import user_is_seller
 from .forms import NewItemForm
@@ -131,11 +139,7 @@ def order_detail(request, pk):
         _mark_order_as_shipped(request, order)
         return redirect('order_detail', pk=(pk))
 
-    context = get_items_and_prices_and_order_sum(
-        BasketItem.objects.filter(order=order))
-    context['order'] = order
-    context['anonymous'] = order.buyer is None
-
+    context = _order_context(order)
     return render(request, 'seller/order-detail.html', context)
 
 
@@ -144,3 +148,41 @@ def _mark_order_as_shipped(request, order):
         order.status = Order.Status.SHIPPED
         order.save()
         messages.success(request, 'Order marked as shipped')
+
+
+class UserIsSellerMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+
+
+class PdfInvoiceView(UserIsSellerMixin, View):
+    def get(self, request, pk, *_, **__):
+        try:
+            order = Order.objects.get(id=pk)
+        except ObjectDoesNotExist:
+            return HttpResponseNotFound()
+
+        context = _order_context(order)
+        context['due_date'] = order.order_date + \
+            timezone.timedelta(days=settings.INVOICE_DUE_DATE_DAYS)
+        return _render_pdf('seller/invoice.html', context, request)
+
+
+def _order_context(order):
+    context = get_items_and_prices_and_order_sum(
+        BasketItem.objects.filter(order=order))
+    context['order'] = order
+    context['anonymous_user'] = order.buyer is None
+    return context
+
+
+def _render_pdf(template_source, context, request):
+    template = get_template(template_source)
+    html = template.render(context)
+    result = BytesIO()
+    status = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+
+    if not status.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    messages.error(request, 'Could not generate PDF invoice')
+    return redirect('orders')
