@@ -34,6 +34,7 @@ urlpatterns = [
          name="order_detail"),
     path('invoice/<int:pk>/',
          seller_views.PdfInvoiceView.as_view(), name="invoice"),
+    path('overview/', seller_views.overview, name="overview"),
 
     path('register/', user_views.register, name="register"),
     path('login/', auth_views.LoginView.as_view(

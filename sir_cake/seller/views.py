@@ -14,6 +14,7 @@ from xhtml2pdf import pisa
 from .decorators import user_is_seller
 from .forms import NewItemForm
 from .models import Item, Order
+from . import statistic
 from .utils import total_order_price
 from sir_cake.utils import all_products_context, pagination
 from store.models import BasketItem
@@ -186,3 +187,19 @@ def _render_pdf(template_source, context, request):
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     messages.error(request, 'Could not generate PDF invoice')
     return redirect('orders')
+
+
+def overview(request):
+    last_month_sales, last_month_registred_users = statistic.last_month_statistic()
+
+    context = {
+        'url_name': request.resolver_match.url_name,
+        'inventory_value': statistic.inventory_value(),
+        'total_sales': statistic.total_sales(),
+        'number_customers': statistic.number_customers(),
+        'zip_best_sellers': statistic.best_sellers(),
+        'last_month_sales': last_month_sales,
+        'last_month_registred_users': last_month_registred_users,
+    }
+
+    return render(request, 'seller/overview.html', context)
