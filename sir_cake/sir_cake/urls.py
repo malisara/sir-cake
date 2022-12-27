@@ -37,7 +37,7 @@ urlpatterns = [
     path('overview/', seller_views.overview, name="overview"),
 
     path('js-sales-status-ratio/', seller_views.sales_status_ratio_js),
-    path('js-sold_per_category/', seller_views.sold_per_category),
+    path('js-sold-per-category/', seller_views.sold_per_category),
     path('js-sales-graph/', seller_views.sales_graph_js),
     path('js-user-registration-statistic/',
          seller_views.user_registration_statistic_js),
