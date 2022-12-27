@@ -36,6 +36,12 @@ urlpatterns = [
          seller_views.PdfInvoiceView.as_view(), name="invoice"),
     path('overview/', seller_views.overview, name="overview"),
 
+    path('js-sales-status-ratio/', seller_views.sales_status_ratio_js),
+    path('js-sales-categories/', seller_views.sold_per_category),
+    path('js-sales-trend/', seller_views.sales_graph_js),
+    path('js-new-users/', seller_views.user_registration_statistic_js),
+    path('js-un-anonymous-users/', seller_views.un_registred_users_js),
+
     path('register/', user_views.register, name="register"),
     path('login/', auth_views.LoginView.as_view(
         template_name='users/login.html'), name="login"),

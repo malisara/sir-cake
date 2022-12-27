@@ -9,7 +9,10 @@ from django.template.loader import get_template
 from django.utils import timezone
 from django.views import View
 from io import BytesIO
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from xhtml2pdf import pisa
+
 
 from .decorators import user_is_seller
 from .forms import NewItemForm
@@ -189,9 +192,9 @@ def _render_pdf(template_source, context, request):
     return redirect('orders')
 
 
+@user_is_seller
 def overview(request):
     last_month_sales, last_month_registred_users = statistic.last_month_statistic()
-
     context = {
         'url_name': request.resolver_match.url_name,
         'inventory_value': statistic.inventory_value(),
@@ -203,3 +206,33 @@ def overview(request):
     }
 
     return render(request, 'seller/overview.html', context)
+
+
+@user_is_seller
+@api_view(['GET'])
+def sales_status_ratio_js(request):
+    return Response(statistic.sales_status_ratio())
+
+
+@user_is_seller
+@api_view(['GET'])
+def sold_per_category(request):
+    return Response(statistic.sold_per_category())
+
+
+@user_is_seller
+@api_view(['GET'])
+def sales_graph_js(request):
+    return Response(statistic.sales_graph())
+
+
+@user_is_seller
+@api_view(['GET'])
+def user_registration_statistic_js(request):
+    return Response(statistic.user_registration_statistic())
+
+
+@user_is_seller
+@api_view(['GET'])
+def un_registred_users_js(request):
+    return Response(statistic.un_registred_users())
