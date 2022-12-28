@@ -21,7 +21,7 @@ def total_sales():
 
 
 def best_sellers():
-    # Top 5 best sold items
+    '''Top 5 best sold items'''
     top_five_basket_items = _sold_basket_items().values('item_to_buy').annotate(
         number_items=Sum('quantity')).order_by('-number_items')[:5]
 
@@ -51,7 +51,7 @@ def number_customers():
 
 
 def last_month_statistic():
-    # Newly registred users and sold items in € in last 30days
+    '''Newly registred users and sold items (€) in last 30days'''
     time_delta_last_month = timezone.now()-timezone.timedelta(days=30)
     orders = Order.objects.exclude(status=Order.Status.PREORDER).filter(
         order_date__gte=time_delta_last_month)
@@ -97,8 +97,9 @@ def sold_per_category():
 
 
 def sales_graph():
+    '''Sale trend (€) for last 150 orders'''
     sales = {'date': [], 'sales': []}
-    orders = Order.objects.exclude(status=Order.Status.PREORDER)
+    orders = Order.objects.exclude(status=Order.Status.PREORDER)[:150]
     for order in orders:
         value = total_order_price(BasketItem.objects.filter(order=order))
         date = order.order_date.strftime("%d.%m.%y")
@@ -113,9 +114,9 @@ def sales_graph():
 
 
 def user_registration_statistic():
-    '''This function return register statistic for last 100 users'''
+    '''This function return register statistic for last 40 users'''
     registrations = {'date': [], 'number_users': []}
-    last_hundred_users = User.objects.all()[:100]
+    last_hundred_users = User.objects.all()[:40]
 
     for user in last_hundred_users:
         date_joined = user.date_joined.strftime("%d.%m.%y")

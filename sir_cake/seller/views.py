@@ -223,6 +223,7 @@ def sold_per_category(request):
 @user_is_seller
 @api_view(['GET'])
 def sales_graph_js(request):
+    print(statistic.sales_graph())
     return Response(statistic.sales_graph())
 
 
