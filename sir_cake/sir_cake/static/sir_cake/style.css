@@ -58,20 +58,20 @@ body {
 
 .new-product-form {
     display: grid;
-    grid-template-columns: 4fr 2fr;
-    grid-template-rows: 0.5fr 0.5fr 1fr 0.5fr 0.5fr;
+    grid-template-columns: 1fr 1fr;
     column-gap: 10px;
     grid-template-areas: "title title"
         "price quantity"
         "decsription decsription"
         "image category"
-        ". button";
-    padding-top: 2rem;
+        "button-back button";
+    padding: 2rem;
     padding-right: 3rem;
     padding-left: 3rem;
 }
 
 .new-product-div-style {
+    width: 70%;
     border: 1px solid;
     border-color: var(--beige);
     box-shadow: 15px 10px 25px var(--beige);
@@ -119,6 +119,7 @@ body {
 
 #id_title,
 #id_price,
+#id_quantity,
 #id_inventory,
 #id_category {
     border-radius: 20px;
@@ -140,6 +141,11 @@ body {
     grid-area: button;
     justify-self: end;
     color: var(--semi-pink);
+}
+
+.button-back {
+    grid-area: button-back;
+    justify-self: end;
 }
 
 .post-button-grid:hover,
