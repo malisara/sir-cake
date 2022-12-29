@@ -2,25 +2,32 @@
 
 {% block content %}
 
-<div class="container detail-item-containter">
-    <a href="{% url 'store' %}">
-        <i class="bi bi-arrow-left go-back-icon"></i>
-    </a>
+<div class="container">
+    <div class="row detail-item-containter">
 
-    <div class="image-detail"><img src="{{item.image.url}}"></img></div>
-    <div class=info-div-detail>
-        <div class="detail-category">{{item.long_category}}</div>
-        <div class="detail-title">{{item.title}}</div>
-        <div class="detail-price">{{item.price}}€</div>
-        <div class="detail-description">{{item.description}}</div>
+        <div class="col-md-5">
+            <div class="image-detail"><img src="{{item.image.url}}" class="rounded-image"></img></div>
+        </div>
+        <div class="col-md-7">
+            <div class=info-div-detail>
+                <div class="detail-category">{{item.long_category}}</div>
+                <div class="detail-title">{{item.title}}</div>
+                <div class="detail-price">{{item.price}}€</div>
+                <div class="detail-description">{{item.description}}</div>
 
-        <form action="" method="post">
-            {% csrf_token %}
-            {{form}}
-            <button class="detail-button" type="submit">Add to basket</button>
-        </form>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{form}}
+
+                    <button class="detail-button" type="submit">Add to basket</button>
+                    <a href="{% url 'store' %}" class="support-text-link margin-left">
+                        Back to store
+                    </a>
+                </form>
+
+            </div>
+        </div>
     </div>
-
 </div>
 
 {% endblock %}

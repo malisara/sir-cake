@@ -1,16 +1,14 @@
 {% extends 'seller/base-seller.html' %}
-{% load static %}
 {% load crispy_forms_tags %}
 
 {% block content %}
 
 <div class="container">
-
-    <div class="category-title-container" style="font-size: 2rem;">New Item
-        <div style="font-size:1.5rem;  margin-top: 0.5rem;">&#127849;</div>
+    <div class="bigger-title-font">New Item
+        <div class="emoji">&#127849;</div>
     </div>
     <div class=" d-flex justify-content-center">
-        <div class="new-product-div-style" style="margin-bottom:3rem;">
+        <div class="new-product-div-style">
 
             <form method="post" class="new-product-form" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -20,9 +18,10 @@
                 </a>
 
                 <button type="submit" class="post-button-grid">Post</button>
+            </form>
         </div>
-        </form>
 
     </div>
+</div>
 
-    {% endblock content %}
+{% endblock content %}

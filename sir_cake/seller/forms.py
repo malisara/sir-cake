@@ -7,3 +7,7 @@ class NewItemForm(forms.ModelForm):
         model = Item
         fields = ['title', 'price', 'quantity',
                   'description', 'category', 'image']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['description'].widget = forms.Textarea(attrs={'rows': 6})

@@ -1,8 +1,8 @@
 <div class="sidebar">
   {% if url_name == 'seller_all_items' %}
-  <a href="{% url 'seller_all_items' %}" class="active"><i class="bi bi-cart3 new-item-icon"></i>All products</a>
+  <a href="{% url 'seller_all_items' %}" class="active"><i class="bi bi-cart3 new-item-icon"></i>Items</a>
   {% else %}
-  <a href="{% url 'seller_all_items' %}"><i class="bi bi-cart3 new-item-icon"></i>All products</a>
+  <a href="{% url 'seller_all_items' %}"><i class="bi bi-cart3 new-item-icon"></i>Items</a>
   {% endif %}
 
   {% if url_name == 'seller_orders' %}

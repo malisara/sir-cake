@@ -11,7 +11,6 @@
     --dusty-pink: rgb(197, 87, 112);
     --semi-pink: rgb(235, 135, 159);
     --lighter-pink: rgb(225, 157, 172);
-    --light-pink: rgb(236, 195, 203);
     --beige: rgb(240, 236, 235);
     --light-beige: rgba(243, 242, 240, 0.651);
     --gray-text: rgb(73, 72, 72);
@@ -37,16 +36,6 @@ body {
 }
 
 /* New Item */
-.new-item-title-frame {
-    padding: 1rem;
-    border: solid 1px;
-    border-color: var(--border-color);
-    border-radius: 4px;
-    background-color: var(--beige);
-    margin-top: 2rem;
-    margin-bottom: 4rem;
-    display: grid;
-}
 
 .page-title {
     font-family: 'Lato', sans-serif;
@@ -75,13 +64,9 @@ body {
     border: 1px solid;
     border-color: var(--beige);
     box-shadow: 15px 10px 25px var(--beige);
+    margin-bottom: 3rem;
 }
 
-.new-item-image {
-    max-height: 35em;
-    max-width: 100%;
-    padding: 1rem;
-}
 
 /*hide help text*/
 #error_1_id_price,
@@ -122,13 +107,11 @@ body {
 #id_quantity,
 #id_inventory,
 #id_category {
-    border-radius: 20px;
+    border-radius: 10px;
     min-height: 2rem;
 }
 
-#id_description {
-    min-height: 10rem;
-}
+
 
 .post-button-grid {
     width: 4.5rem;
@@ -168,12 +151,26 @@ body {
     opacity: 0.8;
 }
 
+/* Edit item */
+
+.bigger-title-font {
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+    color: var(--gray-text);
+    margin: 3rem 0rem;
+    font-size: 2rem;
+}
+
+.emoji {
+    font-size: 1.7rem;
+    margin-top: 0.5rem;
+}
 
 /* Navbar */
 .sidebar {
     width: 100%;
     height: 100%;
-    background-color: var(--light-pink);
+    background-color: rgb(236, 195, 203);
     position: relative;
     min-height: 100vh;
     overflow: auto;
@@ -232,19 +229,8 @@ body {
     display: flex;
 }
 
-.item_quantity_form {
-    width: 70px;
-    height: 2.8rem;
-    border-radius: 5px;
-    text-align: center;
-    margin-top: 3rem;
-}
-
 .image-detail {
     display: flex;
-    width: 40%;
-    justify-content: center;
-    margin-right: 2rem;
 }
 
 .rounded-image {
@@ -279,6 +265,7 @@ body {
 .detail-description {
     margin-top: 1rem;
     font-family: 'Lato', sans-serif;
+    min-height: 8rem;
 }
 
 .detail-button {
@@ -300,14 +287,8 @@ body {
     border-color: var(--semi-pink);
 }
 
-.go-back-icon {
-    font-size: 2.5rem;
-    color: var(--semi-pink);
+.margin-left {
     margin-left: 1rem;
-}
-
-.go-back-icon:hover {
-    opacity: 0.7;
 }
 
 /*All items*/
@@ -469,7 +450,6 @@ body {
 /*Delete item*/
 
 .delete-button {
-    margin-top: 2rem;
     height: 3rem;
     border-radius: 10px;
     background-color: transparent;
@@ -480,7 +460,6 @@ body {
     padding: 0.5rem;
     border-color: var(--dismiss-red);
     border: solid 1px;
-    width: 50%;
 }
 
 .delete-button:hover {
@@ -489,7 +468,6 @@ body {
 }
 
 .back-button {
-    margin-top: 2rem;
     height: 3rem;
     border-radius: 10px;
     background-color: transparent;
@@ -500,7 +478,7 @@ body {
     padding: 0.5rem;
     border: solid 1px;
     border-color: var(--accept-green);
-    width: 50%;
+    margin-right: 1rem;
 }
 
 .back-button:hover {
@@ -753,9 +731,6 @@ nav {
 #id_quantity {
     color: black;
     height: 2.5rem;
-    width: 5rem;
-    border-radius: 2px;
-
 }
 
 /*Hide input arrows*/
