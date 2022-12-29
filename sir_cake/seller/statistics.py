@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db.models import F, Sum
+from django.db.models import Count, F, Sum
 from django.utils import timezone
 
 from .models import Item, Order
@@ -17,18 +17,17 @@ def inventory_value():
 def total_sales():
     sold_items = _sold_basket_items().aggregate(
         value=Sum(F('quantity') * F('item_to_buy__price')))
+    if sold_items['value'] is None:
+        return 0
     return sold_items['value']
 
 
 def best_sellers():
-    '''Top 5 best sold items'''
+    """Top 5 best sold items"""
     top_five_basket_items = _sold_basket_items().values('item_to_buy').annotate(
         number_items=Sum('quantity')).order_by('-number_items')[:5]
 
-    items = []
-    categories = []
-    number_items_sold = []
-    total_sales = []
+    items, categories, number_items_sold, total_sales = [], [], [], []
 
     for basket_item in top_five_basket_items:
         item = Item.objects.get(id=basket_item['item_to_buy'])
@@ -46,41 +45,29 @@ def _sold_basket_items():
         order__status=Order.Status.PREORDER)
 
 
-def number_customers():
-    return _number_registred_users() + _number_unregistred_users()
+def number_of_visitors():
+    return _number_registered_users() + number_anonymous_users()
 
 
-def last_month_statistic():
-    '''Newly registred users and sold items (€) in last 30days'''
-    time_delta_last_month = timezone.now()-timezone.timedelta(days=30)
-    orders = Order.objects.exclude(status=Order.Status.PREORDER).filter(
-        order_date__gte=time_delta_last_month)
+def last_30_days_statistics():
+    """Newly registered users and sold items (€) in last 30days"""
+    time_delta_last_month = timezone.now() - timezone.timedelta(days=30)
+    shopping_bag = BasketItem.objects.exclude(
+        order__status=Order.Status.PREORDER).filter(
+        order__order_date__gte=time_delta_last_month)
 
-    sales = 0
-    for order in orders:
-        basket_item = BasketItem.objects.filter(order=order)
-        sales += total_order_price(basket_item)
-
-    registred_users = User.objects.filter(
+    registered_users = User.objects.filter(
         date_joined__gte=time_delta_last_month).count()
 
-    return sales, registred_users
-
-
-def _number_registred_users():
-    return User.objects.count()
-
-
-def _number_unregistred_users():
-    return AnonymousUser.objects.count()
+    return total_order_price(shopping_bag), registered_users
 
 
 def sales_status_ratio():
     order = Order.objects.exclude(status=Order.Status.PREORDER)
 
-    return {'status': [Order.Status.UNSENT, Order.Status.SHIPPED],
-            'quantity': [order.filter(status=Order.Status.PAID).count(),
-                         order.filter(status=Order.Status.SHIPPED).count()]}
+    return {'status': (Order.Status.UNSENT, Order.Status.SHIPPED),
+            'quantity': (order.filter(status=Order.Status.PAID).count(),
+                         order.filter(status=Order.Status.SHIPPED).count())}
 
 
 def sold_per_category():
@@ -97,7 +84,7 @@ def sold_per_category():
 
 
 def sales_graph():
-    '''Sale trend (€) for last 150 orders'''
+    """Sale trend (€) for last 150 orders"""
     sales = {'date': [], 'sales': []}
     orders = Order.objects.exclude(status=Order.Status.PREORDER)[:150]
     for order in orders:
@@ -113,23 +100,34 @@ def sales_graph():
     return sales
 
 
-def user_registration_statistic():
-    '''This function return register statistic for last 40 users'''
+def user_registration_last_30_days_statistic():
+    """This function returns register statistic for last 30 days"""
+    time_delta = timezone.now() - timezone.timedelta(days=30)
     registrations = {'date': [], 'number_users': []}
-    last_hundred_users = User.objects.all()[:40]
 
-    for user in last_hundred_users:
-        date_joined = user.date_joined.strftime("%d.%m.%y")
-        try:
-            index = registrations['date'].index(date_joined)
-            registrations['number_users'][index] += 1
-        except ValueError:
-            registrations['date'].append(date_joined)
-            registrations['number_users'].append(1)
+    users_per_date = User.objects.all().filter(date_joined__gte=time_delta).values(
+        'date_joined__date').annotate(number_users=Count('id'))
+
+    for item in users_per_date:
+        date_joined = item['date_joined__date'].strftime("%d.%m.%y")
+        registrations['date'].append(date_joined)
+        registrations['number_users'].append(item['number_users'])
+    # Taken from:
+    # https://stackoverflow.com/questions/9764298/how-to-sort-two-lists-which-reference-each-other-in-the-exact-same-way
+    registrations['date'], registrations['number_users'] = zip(
+        *sorted(zip(registrations['date'], registrations['number_users'])))
     return registrations
 
 
-def un_registred_users():
-    return {'user_status': ['registered', 'unregistered'],
-            'number_users': [_number_registred_users(),
-                             _number_unregistred_users()]}
+def un_registered_users():
+    return {'user_status': ('registered', 'unregistered'),
+            'number_users': (_number_registered_users(),
+                             number_anonymous_users())}
+
+
+def _number_registered_users():
+    return User.objects.count()
+
+
+def number_anonymous_users():
+    return AnonymousUser.objects.count()

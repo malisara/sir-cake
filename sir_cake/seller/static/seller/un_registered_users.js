@@ -1,5 +1,5 @@
 const getDataRegisterUser = async () => {
-    const response = await fetch('/js-un-regstred-users/');
+    const response = await fetch('/js-un-regstered-users/');
     const json = await response.json();
 
     const data = {
@@ -18,7 +18,7 @@ const getDataRegisterUser = async () => {
     };
 
     const myChart = new Chart(
-        document.getElementById('ChartUnRegistredUsers'),
+        document.getElementById('ChartUnregisteredUsers'),
         config
     );
 }

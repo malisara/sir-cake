@@ -5,7 +5,7 @@ const getDataUserRegistration = async () => {
     const data = {
         labels: json.date,
         datasets: [{
-            label: 'Users registred',
+            label: 'Users registered',
             backgroundColor: ['rgb(225, 157, 172)'],
             data: json.number_users,
         }]

@@ -23,9 +23,9 @@
                 <div class="statistic-data">{{total_sales}}€</div>
             </div>
             <div class="statistic-containter">
-                <div class="statistic-title">Number of Customers</div>
+                <div class="statistic-title">Number of Visitors</div>
                 <div class="statistic-icon"><i class="bi bi-person-fill"></i></div>
-                <div class="statistic-data">{{number_customers}}</div>
+                <div class="statistic-data">{{number_of_visitors}}</div>
             </div>
         </div>
     </div>
@@ -78,7 +78,7 @@
 <!--Last month statistic + bestellers-->
 <div class="row">
     <div class="col">
-        <div class="category-title-container">LAST MONTH STATISTIC</div>
+        <div class="category-title-container">LAST 30 DAYS STATISTIC</div>
     </div>
     <div class="col">
         <div class="category-title-container">TOP 5 BESTSELLERS</div>
@@ -93,9 +93,9 @@
                 <div class="statistic-data">{{last_month_sales}} €</div>
             </div>
             <div class="statistic-containter" style="width:40%;">
-                <div class="statistic-title">Newly registred Users</div>
+                <div class="statistic-title">Newly registered Users</div>
                 <div class="statistic-icon"><i class="bi bi-person-fill"></i></div>
-                <div class="statistic-data">{{last_month_registred_users}}</div>
+                <div class="statistic-data">{{last_month_registered_users}}</div>
             </div>
         </div>
     </div>
@@ -132,7 +132,7 @@
 <!--Users-->
 <div class="row">
     <div class="col">
-        <div class="category-title-container">LATEST USER REGISTRATIONS</div>
+        <div class="category-title-container">USER REGISTRATIONS IN LAST 30 DAYS</div>
     </div>
     <div class="col">
         <div class="category-title-container">USER OVERVEW</div>
@@ -147,7 +147,7 @@
 
     <div class="col">
         <div>
-            <canvas class="jschart" id="ChartUnRegistredUsers"></canvas>
+            <canvas class="jschart" id="ChartUnregisteredUsers"></canvas>
         </div>
     </div>
 </div>
@@ -163,5 +163,5 @@
 <script type="text/javascript" src="{% static 'seller/sold_per_category.js' %}"></script>
 <script type="text/javascript" src="{% static 'seller/sales_graph.js' %}"></script>
 <script type="text/javascript" src="{% static 'seller/user_registration.js' %}"></script>
-<script type="text/javascript" src="{% static 'seller/un_registred_users.js' %}"></script>
+<script type="text/javascript" src="{% static 'seller/un_registered_users.js' %}"></script>
 {% endblock javascript %}
