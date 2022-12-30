@@ -19,47 +19,36 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from seller import views as seller_views
-from seller import api_views as api_views
 from users import views as user_views
 from store import views as store_views
 
 
 urlpatterns = [
-    path('new-item/', seller_views.new_item, name="seller_new_item"),
-    path('item/<int:pk>/', seller_views.item_detail, name="seller_item_detail"),
-    path('all-items/', seller_views.all_items, name="seller_all_items"),
-    path('item/<int:pk>/edit/', seller_views.edit_item,
-         name="seller_edit_item"),
-    path('item/<int:pk>/delete/', seller_views.delete_item,
-         name="seller_delete_item"),
-    path('orders/', seller_views.orders, name="seller_orders"),
+    path('new-item/', seller_views.new_item, name="new_item"),
+    path('item/<int:pk>/', seller_views.item_detail, name="item_detail"),
+    path('all-items/', seller_views.all_items, name="all_items"),
+    path('item/<int:pk>/edit/', seller_views.edit_item, name="edit_item"),
+    path('item/<int:pk>/delete/', seller_views.delete_item, name="delete_item"),
+    path('orders/', seller_views.orders, name="orders"),
     path('order/<int:pk>/detail', seller_views.order_detail,
-         name="seller_order_detail"),
+         name="order_detail"),
     path('invoice/<int:pk>/',
-         seller_views.PdfInvoiceView.as_view(), name="seller_invoice"),
-    path('overview/', seller_views.overview, name="seller_overview"),
+         seller_views.PdfInvoiceView.as_view(), name="invoice"),
 
-    path('js-sales-status-ratio/', api_views.sales_status_ratio_api_view),
-    path('js-sold-per-category/', api_views.sold_per_category_api_view),
-    path('js-sales-graph/', api_views.sales_graph_api_view),
-    path('js-user-registration-statistic/',
-         api_views.user_registration_statistic_api_view),
-    path('js-un-regstered-users/', api_views.un_registered_users_api_view),
-
-    path('register/', user_views.register, name="user_register"),
+    path('register/', user_views.register, name="register"),
     path('login/', auth_views.LoginView.as_view(
-        template_name='users/login.html'), name="user_login"),
+        template_name='users/login.html'), name="login"),
     path('logout/', auth_views.LogoutView.as_view(
-        template_name='users/logout.html'), name="user_logout"),
+        template_name='users/logout.html'), name="logout"),
 
     path('store/', store_views.store, name="store"),
     path('store/item/<int:pk>/', store_views.store_item_detail,
          name="store_item_detail"),
     path('choose-purchasing-mode/', store_views.choose_purchasing_mode,
-         name="store_choose_purchasing_mode"),
-    path('shopping-bag/', store_views.shopping_bag, name="store_shopping_bag"),
-    path('shipping/', store_views.shipping, name="store_shipping"),
-    path('payment/', store_views.payment, name="store_payment"),
+         name="choose_purchasing_mode"),
+    path('shopping-bag/', store_views.shopping_bag, name="shopping_bag"),
+    path('shipping/', store_views.shipping, name="shipping"),
+    path('payment/', store_views.payment, name="payment"),
 ]
 
 if settings.DEBUG:

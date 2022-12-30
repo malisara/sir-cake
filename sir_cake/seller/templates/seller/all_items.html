@@ -4,7 +4,7 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col">
-            <a href="{% url 'seller_new_item' %}">
+            <a href="{% url 'new_item' %}">
                 <i class="bi bi-plus-square-fill new-item-top-icon"></i>
             </a>
         </div>
@@ -29,7 +29,7 @@
     {% if items %}
     {% for item in items %}
     <div class="product-grid-container">
-        <a href="{% url 'seller_item_detail' item.pk %}">
+        <a href="{% url 'item_detail' item.pk %}">
             <div class="grid-item-image all-products-data-text"><img src="{{item.image.url}}" height="100px"></img>
         </a>
     </div>
@@ -43,9 +43,9 @@
     <div class="grid-item-inventory all-products-data-text">{{item.quantity}}</div>
     {% endif %}
     <div class="grid-item-action all-products-data-text">
-        <a href="{% url 'seller_item_detail' item.pk %}"><i class="bi bi-zoom-in zoom-action-button"></i></a>
-        <a href="{% url 'seller_edit_item' item.pk %}"><i class="bi bi-pencil edit-action-button"></i></a>
-        <a href="{% url 'seller_delete_item' item.pk %}"><i class="bi bi-x-lg delete-action-button"></i></a>
+        <a href="{% url 'item_detail' item.pk %}"><i class="bi bi-zoom-in zoom-action-button"></i></a>
+        <a href="{% url 'edit_item' item.pk %}"><i class="bi bi-pencil edit-action-button"></i></a>
+        <a href="{% url 'delete_item' item.pk %}"><i class="bi bi-x-lg delete-action-button"></i></a>
     </div>
 </div>
 {% endfor %}
