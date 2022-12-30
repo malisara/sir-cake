@@ -2,24 +2,24 @@
 
     <div class="container-fluid justify-content-end">
         {% if user.is_authenticated %}
-        <a href="{% url 'logout' %}" class="non-link link-to-nav-gray"><i
+        <a href="{% url 'user_logout' %}" class="non-link link-to-nav-gray"><i
                 class="bi bi-box-arrow-right navbar-icon"></i></a>
         {% else %}
-        <a href="{% url 'register' %}" class="non-link link-to-nav-gray"><i
+        <a href="{% url 'user_register' %}" class="non-link link-to-nav-gray"><i
                 class="bi bi-person-plus navbar-icon"></i></a>
-        <a href="{% url 'login' %}" class="non-link link-to-nav-gray"><i
+        <a href="{% url 'user_login' %}" class="non-link link-to-nav-gray"><i
                 class="bi bi-box-arrow-in-right navbar-icon"></i></a>
         {% endif %}
 
         {% if items_in_basket %}
         <!--TODO get N of items in all store views-->
-        <a href="{% url 'shopping_bag' %}" class="non-link link-to-nav-gray">
+        <a href="{% url 'store_shopping_bag' %}" class="non-link link-to-nav-gray">
             <i class="bi bi-basket3-fill navbar-icon-bg-fill">
                 <!--TODO notification-->
             </i>
         </a>
         {% else %}
-        <a href="{% url 'shopping_bag' %}" class="non-link link-to-nav-gray">
+        <a href="{% url 'store_shopping_bag' %}" class="non-link link-to-nav-gray">
             <i class="bi bi-basket3 navbar-icon"></i>
         </a>
         {% endif %}

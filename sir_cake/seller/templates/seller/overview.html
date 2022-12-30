@@ -1,0 +1,167 @@
+{% extends 'seller/base-seller.html' %}
+{% load static %}
+
+{% block content %}
+
+<!--Overall statisctic-->
+<div class="row">
+    <div class="col">
+        <div class="overview-title">TOTAL OVERVIEW</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div style="display:flex;">
+            <div class="statistic-containter">
+                <div class="statistic-title">Total Inventory</div>
+                <div class="statistic-icon"><i class="bi bi-box2"></i></div>
+                <div class="statistic-data">{{inventory_value}}€</div>
+            </div>
+            <div class="statistic-containter">
+                <div class="statistic-title">Total Sales</div>
+                <div class="statistic-icon"><i class="bi bi-cash-stack"></i></div>
+                <div class="statistic-data">{{total_sales}}€</div>
+            </div>
+            <div class="statistic-containter">
+                <div class="statistic-title">Number of Visitors</div>
+                <div class="statistic-icon"><i class="bi bi-person-fill"></i></div>
+                <div class="statistic-data">{{number_of_visitors}}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!--Order status + sales/categories-->
+<div class="row">
+    <div class="col">
+        <div class="category-title-container">ORDER STATUS</div>
+    </div>
+    <div class="col">
+        <div class="category-title-container">SALES PER CATEGORY</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="container">
+            <div>
+                <canvas class="jschart" id="ChartSalesRatio"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div>
+            <canvas class="jschart" id="ChartSoldCategory"></canvas>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!--SALES trend-->
+<div class="row">
+    <div class="col">
+        <div class="category-title-container">SALES</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div>
+            <canvas class="jschart" id="chartSales"></canvas>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!--Last month statistic + bestellers-->
+<div class="row">
+    <div class="col">
+        <div class="category-title-container">LAST 30 DAYS STATISTIC</div>
+    </div>
+    <div class="col">
+        <div class="category-title-container">TOP 5 BESTSELLERS</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div style="display:flex;">
+            <div class="statistic-containter" style="width:40%;">
+                <div class="statistic-title">Last Month Sales</div>
+                <div class="statistic-icon"><i class="bi bi-cash-stack"></i></div>
+                <div class="statistic-data">{{last_month_sales}} €</div>
+            </div>
+            <div class="statistic-containter" style="width:40%;">
+                <div class="statistic-title">Newly registered Users</div>
+                <div class="statistic-icon"><i class="bi bi-person-fill"></i></div>
+                <div class="statistic-data">{{last_month_registered_users}}</div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="col">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Items sold</th>
+                    <th scope="col">Total sales (€)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for best_seller in zip_best_sellers %}
+                <!-- zip(items, categories_long_name, items_sold, total_sales) -->
+                <tr>
+                    <th scope="row">{{best_seller.0.title}}</th>
+                    <td>{{best_seller.1}}</td>
+                    <td>{{best_seller.2}}</td>
+                    <td>{{best_seller.3}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr>
+
+<!--Users-->
+<div class="row">
+    <div class="col">
+        <div class="category-title-container">USER REGISTRATIONS IN LAST 30 DAYS</div>
+    </div>
+    <div class="col">
+        <div class="category-title-container">USER OVERVEW</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div>
+            <canvas class="jschart" id="ChartUseRegistration"></canvas>
+        </div>
+    </div>
+
+    <div class="col">
+        <div>
+            <canvas class="jschart" id="ChartUnregisteredUsers"></canvas>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+
+{% block javascript %}
+<!--CHART.JS-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script type="text/javascript" src="{% static 'seller/sales_status_ratio.js' %}"></script>
+<script type="text/javascript" src="{% static 'seller/sold_per_category.js' %}"></script>
+<script type="text/javascript" src="{% static 'seller/sales_graph.js' %}"></script>
+<script type="text/javascript" src="{% static 'seller/user_registration.js' %}"></script>
+<script type="text/javascript" src="{% static 'seller/un_registered_users.js' %}"></script>
+{% endblock javascript %}

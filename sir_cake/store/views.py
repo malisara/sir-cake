@@ -83,7 +83,7 @@ def choose_purchasing_mode(request):
 
 def shopping_bag(request):
     if anonymous_user_without_session(request):
-        return redirect('choose_purchasing_mode')
+        return redirect('store_choose_purchasing_mode')
 
     context = {'step': 1}
     preorder = _get_preorder_or_none(request)
@@ -139,7 +139,7 @@ def shopping_bag(request):
         for form in forms:
             if form.is_valid():
                 form.save()
-                return redirect('shipping')
+                return redirect('store_shipping')
         return redirect('store')
 
     context['items_and_forms'] = list(zip(basket_items, forms))
@@ -169,7 +169,7 @@ def _add_items_to_basket_or_redirect(request,
                                      custom_redirect):
     # This function is only called with POST requests
     if anonymous_user_without_session(request):
-        return 'choose_purchasing_mode'
+        return 'store_choose_purchasing_mode'
 
     if not basket_item_form.is_valid():
         error_string = _set_error_message_from_form_errors(
@@ -232,7 +232,7 @@ def _get_preorder_or_none(request):
 
 def shipping(request):
     if anonymous_user_without_session(request):
-        return redirect('choose_purchasing_mode')
+        return redirect('store_choose_purchasing_mode')
 
     preorder = _get_preorder_or_none(request)
     context = _context_my_bag_total(preorder)
@@ -254,7 +254,7 @@ def shipping(request):
             first_time_saving=address_instance is None)
         valid_form_name = _save_name_data(request, name_form)
         if valid_form_address and valid_form_name:
-            return redirect('payment')
+            return redirect('store_payment')
     context['expire_date'] = _get_basket_expire_date(preorder)
     return render(request, 'store/shipping.html', context)
 
@@ -327,7 +327,7 @@ def _save_name_data(request, name_form):
 def payment(request):
     # Dummy view -> doesn't handle real payments
     if anonymous_user_without_session(request):
-        return redirect('choose_purchasing_mode')
+        return redirect('store_choose_purchasing_mode')
 
     preorder = _get_preorder_or_none(request)
     if request.method == "POST":
@@ -356,7 +356,7 @@ def payment(request):
 
     if _shipping_data_is_missing(request):
         messages.error(request, 'Please, enter shipping data')
-        return redirect('shipping')
+        return redirect('store_shipping')
 
     context['step'] = 3
     context['form'] = payment_form
