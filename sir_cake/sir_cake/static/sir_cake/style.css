@@ -5,7 +5,6 @@
 */
 
 :root {
-    --darker-purple: rgb(92, 80, 156);
     --dismiss-red: rgb(247, 128, 128);
     --accept-green: rgb(148, 216, 148);
     --bright-pink: rgb(200, 9, 76);
@@ -1074,7 +1073,6 @@ input[type=number] {
     margin-top: 2rem;
 }
 
-
 .order-detail-grid-container {
     padding: 1.5rem 0rem;
     border-bottom: dotted 2px;
@@ -1105,4 +1103,65 @@ input[type=number] {
 
 .order-sum {
     grid-area: order-sum;
+}
+
+
+/* Overview */
+
+.statistic-containter {
+    border: solid 2px;
+    border-color: var(--border-color);
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px var(--beige);
+    margin: 1rem;
+    padding: 1rem;
+    width: 30%;
+    display: grid;
+    grid-column: 1fr 2fr;
+    grid-row: 2fr 1fr;
+    grid-template-areas: 'icon-area title'
+        '. value';
+}
+
+.statistic-title {
+    font-family: 'Lato', sans-serif;
+    color: var(--dusty-pink);
+    font-size: 1.4rem;
+    margin-top: 0.4rem;
+    grid-area: title;
+}
+
+.statistic-icon {
+    grid-area: icon-area;
+    color: var(--gray-text);
+    font-size: 1.5rem;
+    justify-self: center;
+    margin-top: 0.5rem;
+}
+
+.statistic-data {
+    grid-area: value;
+    color: var(--gray-text);
+    font-size: 1.2rem;
+}
+
+th {
+    color: var(--gray-text);
+}
+
+
+.jschart {
+    max-height: 20vw;
+    padding: 1rem 2rem;
+    margin-bottom: 3rem;
+    align-content: center;
+}
+
+.overview-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    color: var(--gray-text);
 }

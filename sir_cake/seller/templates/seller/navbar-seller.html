@@ -1,20 +1,20 @@
 <div class="sidebar">
-  {% if url_name == 'all_items' %}
-  <a href="{% url 'all_items' %}" class="active"><i class="bi bi-cart3 new-item-icon"></i>All products</a>
+  {% if url_name == 'seller_all_items' %}
+  <a href="{% url 'seller_all_items' %}" class="active"><i class="bi bi-cart3 new-item-icon"></i>All products</a>
   {% else %}
-  <a href="{% url 'all_items' %}"><i class="bi bi-cart3 new-item-icon"></i>All products</a>
+  <a href="{% url 'seller_all_items' %}"><i class="bi bi-cart3 new-item-icon"></i>All products</a>
   {% endif %}
 
-  {% if url_name == 'orders' %}
-  <a href="{% url 'orders' %}" class="active"><i class="bi bi-bag-check new-item-icon"></i>Orders</a>
+  {% if url_name == 'seller_orders' %}
+  <a href="{% url 'seller_orders' %}" class="active"><i class="bi bi-bag-check new-item-icon"></i>Orders</a>
   {% else %}
-  <a href="{% url 'orders' %}"><i class="bi bi-bag-check new-item-icon"></i>Orders</a>
+  <a href="{% url 'seller_orders' %}"><i class="bi bi-bag-check new-item-icon"></i>Orders</a>
   {% endif %}
 
-  {% if url_name == 'overview' %}
-  <a href=" #'overview'" class="active"><i class="bi bi-box-seam new-item-icon"></i>Overview</a>
+  {% if url_name == 'seller_overview' %}
+  <a href="{% url 'seller_overview' %}" class="active"><i class="bi bi-box-seam new-item-icon"></i>Overview</a>
   {% else %}
-  <a href="#'overview' "><i class="bi bi-box-seam new-item-icon"></i>Overview</a>
+  <a href="{% url 'seller_overview' %}"><i class="bi bi-box-seam new-item-icon"></i>Overview</a>
   {% endif %}
 
   <a href="{% url 'store' %}"><i class="bi bi-shop new-item-icon"></i>Store</a>

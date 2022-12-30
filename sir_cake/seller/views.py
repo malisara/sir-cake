@@ -11,9 +11,11 @@ from django.views import View
 from io import BytesIO
 from xhtml2pdf import pisa
 
+
 from .decorators import user_is_seller
 from .forms import NewItemForm
 from .models import Item, Order
+from . import statistics
 from .utils import total_order_price
 from sir_cake.utils import all_products_context, pagination
 from store.models import BasketItem
@@ -27,7 +29,7 @@ def new_item(request):
         if form.is_valid():
             form.save()
             messages.success(request, "New item successfully saved")
-            return redirect('all_items')
+            return redirect('seller_all_items')
         else:
             messages.error(
                 "Error: Unable to save the item. Please try again.")
@@ -64,7 +66,7 @@ def edit_item(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Item is successfully updated')
-            return redirect('all_items')
+            return redirect('seller_all_items')
         else:
             messages.error(
                 request, 'Error: item was not updated. Please try again')
@@ -88,7 +90,7 @@ def delete_item(request, pk):
     if request.method == "POST":
         item.delete()
         messages.success(request, "Item successfully deleted")
-        return redirect('all_items')
+        return redirect('seller_all_items')
     return render(request, 'seller/delete-item.html', {'item': item})
 
 
@@ -103,7 +105,7 @@ def orders(request):
                 return HttpResponseBadRequest()
 
             _mark_order_as_shipped(request, order)
-        return redirect('orders')
+        return redirect('seller_orders')
 
     orders = Order.objects.exclude(
         status=Order.Status.PREORDER).order_by('-order_date')
@@ -137,7 +139,7 @@ def order_detail(request, pk):
 
     if request.method == 'POST':
         _mark_order_as_shipped(request, order)
-        return redirect('order_detail', pk=(pk))
+        return redirect('seller_order_detail', pk=(pk))
 
     context = _order_context(order)
     return render(request, 'seller/order-detail.html', context)
@@ -185,4 +187,22 @@ def _render_pdf(template_source, context, request):
     if not status.err:
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     messages.error(request, 'Could not generate PDF invoice')
-    return redirect('orders')
+    return redirect('seller_orders')
+
+
+@user_is_seller
+def overview(request):
+    # simple statistics are passed into the context
+    # more complex ones are fetched by javascript via API endpoints
+    last_month_sales, last_month_registered_users = statistics.last_30_days_statistics()
+    context = {
+        'url_name': request.resolver_match.url_name,
+        'inventory_value': statistics.inventory_value(),
+        'total_sales': statistics.total_sales(),
+        'number_of_visitors': statistics.number_of_visitors(),
+        'zip_best_sellers': statistics.best_sellers(),
+        'last_month_sales': last_month_sales,
+        'last_month_registered_users': last_month_registered_users,
+    }
+
+    return render(request, 'seller/overview.html', context)
