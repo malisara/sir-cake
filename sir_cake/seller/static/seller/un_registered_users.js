@@ -1,5 +1,5 @@
 const getDataRegisterUser = async () => {
-    const response = await fetch('/js-un-regstered-users/');
+    const response = await fetch('/js-un-registered-users/');
     const json = await response.json();
 
     const data = {

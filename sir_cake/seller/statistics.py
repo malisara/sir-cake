@@ -46,7 +46,7 @@ def _sold_basket_items():
 
 
 def number_of_visitors():
-    return _number_registered_users() + number_anonymous_users()
+    return _number_registered_users() + _number_anonymous_users()
 
 
 def last_30_days_statistics():
@@ -122,12 +122,12 @@ def user_registration_last_30_days_statistic():
 def un_registered_users():
     return {'user_status': ('registered', 'unregistered'),
             'number_users': (_number_registered_users(),
-                             number_anonymous_users())}
+                             _number_anonymous_users())}
 
 
 def _number_registered_users():
     return User.objects.count()
 
 
-def number_anonymous_users():
+def _number_anonymous_users():
     return AnonymousUser.objects.count()

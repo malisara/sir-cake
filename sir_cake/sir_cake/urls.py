@@ -44,7 +44,7 @@ urlpatterns = [
     path('js-sales-graph/', api_views.sales_graph_api_view),
     path('js-user-registration-statistic/',
          api_views.user_registration_statistic_api_view),
-    path('js-un-regstered-users/', api_views.un_registered_users_api_view),
+    path('js-un-registered-users/', api_views.un_registered_users_api_view),
 
     path('register/', user_views.register, name="user_register"),
     path('login/', auth_views.LoginView.as_view(
