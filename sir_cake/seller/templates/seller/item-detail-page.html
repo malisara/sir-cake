@@ -2,19 +2,32 @@
 
 {% block content %}
 
-<div class="container detail-item-containter">
-    <a href="{% url 'seller_all_items' %}">
-        <i class="bi bi-arrow-left go-back-icon"></i>
-    </a>
-    <div class="image-detail"><img src="{{item.image.url}}" class="rounded-image"></img></div>
-    <div class=info-div-detail>
-        <div class="detail-category">{{item.long_category}}</div>
-        <div class="detail-title">{{item.title}}</div>
-        <div class="detail-price">{{item.price}}€</div>
-        <div class="detail-description">{{item.description}}</div>
-        <a href="{% url 'seller_edit_item' item.pk %}" class="non-link">
-            <div class="detail-button">EDIT</div>
-        </a>
+<div class="container">
+    <div class="row detail-item-containter">
+        <div class="col-md-5">
+            <div class="image-detail"><img src="{{item.image.url}}" class="rounded-image"></img></div>
+        </div>
+        <div class="col-md-7">
+            <div class="detail-category">{{item.long_category}}</div>
+            <div class="detail-title">{{item.title}}</div>
+            <div class="detail-price">{{item.price}}€</div>
+            <div class="detail-description">{{item.description}}</div>
+
+
+            <div class="row">
+                <div class="col-md-2">
+                    <a href="{% url 'seller_all_items' %}" class="non-link align-self-end">
+                        <div class="delete-basket-button non-link">Back</div>
+                    </a>
+                </div>
+                <div class="col-md-2">
+                    <a href="{% url 'seller_edit_item' item.pk %}" class="non-link align-self-end">
+                        <div class="detail-button">Edit</div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 

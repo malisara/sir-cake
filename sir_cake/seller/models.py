@@ -29,7 +29,7 @@ class Item(models.Model):
     # "Price in €" displayed as a field name in form
     price = models.FloatField("Price in €", default="0.00", validators=[
                               MinValueValidator(0.0)])
-    description = models.CharField(max_length=100, default="", blank=True)
+    description = models.TextField(max_length=100, default="", blank=True)
     category = models.CharField(
         max_length=3,
         choices=CATEGORIES_CHOICES,
