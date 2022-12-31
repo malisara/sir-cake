@@ -29,7 +29,7 @@ class Item(models.Model):
     # "Price in €" displayed as a field name in form
     price = models.FloatField("Price in €", default="0.00", validators=[
                               MinValueValidator(0.0)])
-    description = models.TextField(max_length=100, default="", blank=True)
+    description = models.TextField(max_length=100, null=True, blank=True)
     category = models.CharField(
         max_length=3,
         choices=CATEGORIES_CHOICES,
@@ -42,7 +42,7 @@ class Item(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.shorter_title_description()
+        self.assign_shorter_title()
         self.assign_category_full_name()
 
     def __str__(self):
@@ -59,16 +59,12 @@ class Item(models.Model):
 
         img_cropped.save(self.image.path)
 
-    def shorter_title_description(self):
-        if len(self.title) > 10:
-            self.short_title = self.title[:8] + "..."
+    def assign_shorter_title(self):
+
+        if len(self.title) > 20:
+            self.short_title = self.title[:17] + "..."
         else:
             self.short_title = self.title
-
-        if len(self.description) > 10:
-            self.short_description = self.description[:8] + "..."
-        else:
-            self.short_description = self.description
 
     def assign_category_full_name(self):
         self.long_category = self.SHORT_CATEGORY_TO_NAME[self.category]

@@ -24,7 +24,7 @@
     <div>
         <a href="{% url 'store_item_detail' item.pk %}" class="non-link a-hover">
             <img src="{{item.image.url}}" class="rounded-image" height="200px"></img>
-            <p class="product-title-store">{{item.title|title}}</p>
+            <p class="product-title-store">{{item.short_title|title}}</p>
             <p class="product-price-store">{{item.price}} €</p>
         </a>
         <form method="post">

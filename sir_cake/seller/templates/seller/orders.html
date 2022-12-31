@@ -60,10 +60,10 @@
             </div>
 
             <a href="{% url 'seller_order_detail' order.pk %}" class="magnifying-glass all-products-data-text bold">
-                <i class="bi bi-search pink-link"></i></a> <!--TODO-->
+                <i class="bi bi-search pink-link"></i></a>
 
             <a href="{% url 'seller_invoice' order.pk %}" target="_blank" class="pdf all-products-data-text bold">
-                <i class="bi bi-file-pdf pink-link"></i></a> <!--TODO-->
+                <i class="bi bi-file-pdf pink-link"></i></a>
 
 
             {% else %} <!--Different style for shipped items-->
@@ -82,10 +82,10 @@
                 <div class="status all-products-data-text">{{order.status}}</div>
 
                 <a href="{% url 'seller_order_detail' order.pk %}" class="magnifying-glass all-products-data-text">
-                    <i class="bi bi-search pink-link"></i> <!--TODO-->
+                    <i class="bi bi-search pink-link"></i>
                 </a>
                 <a href="{% url 'seller_invoice' order.pk %}" target="_blank" class="pdf all-products-data-text">
-                    <i class="bi bi-file-pdf pink-link"></i> <!--TODO-->
+                    <i class="bi bi-file-pdf pink-link"></i>
                 </a>
                 {% endif %}
 
