@@ -13,7 +13,7 @@
             <form method="post" class="new-product-form" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{form|crispy}}
-                <a href="{% url 'all_items' %}">
+                <a href="{% url 'seller_all_items' %}">
                     <i class="bi bi-arrow-left new-item-top-icon button-back non-link"></i>
                 </a>
 

@@ -310,48 +310,49 @@ body {
     border-color: var(--border-color);
     border-radius: 4px;
     display: grid;
-    grid-template-columns: 1fr 2fr 2fr 2fr 2fr 2fr 2fr;
+    grid-template-columns: 1fr 2fr 2fr 2fr 2fr 2fr;
     grid-template-areas:
-        "image title description category price inventory action";
+        "image title category price inventory action";
 }
 
 .beige-bg {
     background-color: var(--beige);
 }
 
+
+.grid-item-image,
+.grid-item-title,
+.grid-item-category,
+.grid-item-price,
+.grid-item-inventory,
+.grid-item-action {
+    justify-self: center;
+    align-self: center;
+}
+
+
 .grid-item-image {
     grid-area: image;
-    justify-self: center;
 }
 
 .grid-item-title {
     grid-area: title;
-    justify-self: center;
-}
-
-.grid-item-description {
-    grid-area: description;
-    justify-self: center;
 }
 
 .grid-item-category {
     grid-area: category;
-    justify-self: center;
 }
 
 .grid-item-price {
     grid-area: price;
-    justify-self: center;
 }
 
 .grid-item-inventory {
     grid-area: inventory;
-    justify-self: center;
 }
 
 .grid-item-action {
     grid-area: action;
-    justify-self: center;
 }
 
 .category-text {
