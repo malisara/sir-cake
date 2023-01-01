@@ -1,0 +1,86 @@
+{% extends 'store/base-store.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="bg-landing">
+    <div class="container">
+        <a href="{% url 'store' %}" class="non-link">
+            <div class="landing-title">Sir cake</div>
+        </a>
+        <div class="landing-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos voluptas illo,
+            doloremque fugit consequatur deleniti laudantium eos cupiditate assumenda, vero possimus, dolores recusandae
+            ab qui reiciendis nulla quas. Ea, obcaecati!</div>
+
+        <div class="d-flex justify-content-center">
+            <a href="{% url 'store' %}"> <button class="big-button-landing mt-5">Check out our store</button></a>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col">
+                <a href="{% url 'store' %}?category=CO" class="non-link">
+                    <div class="d-flex justify-content-center detail-price mt-5">Cookies</div>
+                    <div class="landing-description">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Adipisci
+                        nemo
+                        pariatur quod reprehenderit accusamus dolores porro suscipit inventore facilis sit?</div>
+                </a>
+            </div>
+            <div class="col">
+                <a href="{% url 'store' %}?category=CO">
+                    <img src="{% static  'store/landing-cookie.jpg' %}" alt="" class="landing-image">
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <a href="{% url 'store' %}?category=CA">
+                    <img src="{% static 'store/landing-cake.jpg' %}" alt="" class="landing-image">
+                </a>
+            </div>
+            <div class="col">
+                <a href="{% url 'store' %}?category=CA" class="non-link">
+                    <div class="d-flex justify-content-center detail-price mt-5">Cakes</div>
+                    <div class="landing-description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam sed
+                        porro exercitationem voluptate.</div>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <a href="{% url 'store' %}?category=I" class="non-link">
+                    <div class="d-flex justify-content-center detail-price mt-5">Ice creams</div>
+                    <div class="landing-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet eum
+                        perferendis ea inventore quisquam praesentium debitis aliquid.
+                    </div>
+                </a>
+            </div>
+            <div class="col">
+                <a href="{% url 'store' %}?category=I">
+                    <img src="{% static 'store/landing-ice-cream.jpg' %}" alt="" class="landing-image">
+                </a>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <a href="{% url 'store' %}">
+                        <img src="{% static 'store/landing-macrons.jpg' %}" alt="" class="landing-image">
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{% url 'store' %}" class="non-link">
+                        <div class="d-flex justify-content-center detail-price mt-5">Other sweets</div>
+                        <div class="landing-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam
+                            asperiores tenetur, quaerat aliquid accusamus, atque ullam, blanditiis commodi enim quam id
+                            cum nam consequuntur officia aspernatur voluptates! Fugiat nemo quibusdam qui natus quia
+                            fugit vero ducimus. Praesentium deleniti.</div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}

@@ -78,7 +78,7 @@ def choose_purchasing_mode(request):
             AnonymousUser.objects.create(
                 session_id=request.session.session_key)
         return redirect('store')
-    return render(request, 'store/choose_purchasing_mode.html')
+    return render(request, 'store/choose-purchasing-mode.html')
 
 
 def shopping_bag(request):
@@ -397,3 +397,7 @@ def _get_basket_expire_date(preorder):
     expires_delta = timezone.timedelta(minutes=settings.BASKET_EXPIRES_MINUTES)
     return timezone.make_naive(preorder.order_date
                                + expires_delta).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def landing_page(request):
+    return render(request, 'store/landing-page.html')
