@@ -12,12 +12,11 @@
         {% endif %}
 
         {% if items_in_basket %}
-        <!--TODO get N of items in all store views-->
         <a href="{% url 'store_shopping_bag' %}" class="non-link link-to-nav-gray">
-            <i class="bi bi-basket3-fill navbar-icon-bg-fill">
-                <!--TODO notification-->
+            <i class="bi bi-basket3-fill navbar-icon bag-icon-fill">
             </i>
         </a>
+
         {% else %}
         <a href="{% url 'store_shopping_bag' %}" class="non-link link-to-nav-gray">
             <i class="bi bi-basket3 navbar-icon"></i>

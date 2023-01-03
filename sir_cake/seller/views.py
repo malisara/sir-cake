@@ -17,7 +17,7 @@ from .forms import NewItemForm
 from .models import Item, Order
 from . import statistics
 from .utils import total_order_price
-from sir_cake.utils import all_products_context, pagination
+from sir_cake.utils import pagination
 from store.models import BasketItem
 from store.utils import get_items_and_prices_and_order_sum
 
@@ -50,8 +50,19 @@ def item_detail(request, pk):
 
 @user_is_seller
 def all_items(request):
-    context = all_products_context(request)
-    return render(request, 'seller/all_items.html', context)
+    url_name = request.resolver_match.url_name
+    items = Item.objects.all().order_by('-id')
+
+    if items.count() == 0:
+        items = None
+    else:
+        searched = request.GET.get('searched')
+        if searched is not None and searched != "":
+            items = items.filter(title__icontains=searched)
+        items = pagination(request, items, 15)
+
+    return render(request, 'seller/all_items.html',
+                  {'items': items, ' url_name': url_name})
 
 
 @user_is_seller

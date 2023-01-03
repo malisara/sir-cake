@@ -509,15 +509,12 @@ nav {
 }
 
 .navbar-icon:hover,
-.navbar-icon-bg-fill:hover,
 .support-text-link {
     color: var(--semi-pink);
 }
 
-.navbar-icon-bg-fill {
-    padding-right: 1rem;
-    font-size: 1.2rem;
-    color: var(--gray-text);
+.bag-icon-fill {
+    color: var(--dusty-pink);
 }
 
 .link-to-nav-gray {
