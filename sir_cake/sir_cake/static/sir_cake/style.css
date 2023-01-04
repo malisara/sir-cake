@@ -875,6 +875,7 @@ input[type=number] {
     width: 100%;
 }
 
+.big-button-landing:hover,
 .wide-payment-button:hover {
     background-color: var(--semi-pink);
     color: #FFFFFF;
@@ -1146,4 +1147,55 @@ th {
     margin-top: 2rem;
     margin-bottom: 1.5rem;
     color: var(--gray-text);
+}
+
+/* Landing page */
+
+.bg-landing {
+    background-color: #ebeae9a6;
+}
+
+.landing-title {
+    font-family: 'Lato', sans-serif;
+    padding-top: 6rem;
+    font-size: 3.5rem;
+    color: var(--semi-pink);
+    font-weight: 700;
+    text-align: center;
+}
+
+.landing-text {
+    font-family: 'Lato', sans-serif;
+    font-size: 2rem;
+    margin-top: 5rem;
+    text-align: center;
+    color: var(--gray-text);
+}
+
+
+.landing-image {
+    width: 30vw;
+}
+
+.landing-description {
+    font-family: 'Lato', sans-serif;
+    margin-top: 4rem;
+    color: rgb(83, 83, 83);
+    font-size: 1.6rem;
+    text-align: center;
+}
+
+.big-button-landing {
+    grid-area: button-orders;
+    padding: 0.8rem 2.5rem;
+    border-radius: 10px;
+    border: solid 1px;
+    border-color: var(--semi-pink);
+    background-color: transparent;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.3rem;
+    justify-self: end;
+    color: var(--semi-pink);
+    margin-bottom: 5rem;
+    margin-top: 2rem;
 }
