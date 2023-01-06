@@ -1,3 +1,4 @@
+from django.db.models import OuterRef, Subquery, Sum
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
@@ -6,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 
 from seller.models import Item, Order
-from sir_cake.utils import all_products_context
+from sir_cake.utils import pagination
 from store.models import BasketItem
 from users.models import ShippingAddress
 from users.forms import (AnonymousUserUpdateNamesForm,
@@ -17,12 +18,13 @@ from users.models import AnonymousUser
 from .utils import (anonymous_user_without_session,
                     anonymous_user_with_saved_session,
                     get_items_and_prices_and_order_sum,
-                    get_number_reserved_items_in_preorders)
+                    get_number_reserved_items_in_preorders,
+                    get_preorder_or_none)
 
 
 def store(request):
     form = BasketItemForm(1)
-    context = all_products_context(request)
+    context = _available_items_and_category_context(request)
     context['form'] = form
     context['all_categories'] = Item.CATEGORIES_CHOICES
 
@@ -49,6 +51,42 @@ def store(request):
             return redirect(redirect_)
 
     return render(request, 'store/store.html', context)
+
+
+def _available_items_and_category_context(request):
+    # Only items with inventory > 0 and inventory > all users' reservations
+    # are returned
+
+    total_quantity_basket_items = BasketItem.objects.filter(
+        item_to_buy_id=OuterRef('pk')).values(
+            'item_to_buy_id').annotate(total=Sum('quantity')).values('total')
+
+    items_not_in_basket = Item.objects.filter(quantity__gte=0).exclude(
+        id__in=BasketItem.objects.values_list('item_to_buy', flat=True))
+
+    items_in_basket_enough_quantity = Item.objects.filter(
+        quantity__gt=Subquery(total_quantity_basket_items))
+
+    items = items_in_basket_enough_quantity | items_not_in_basket
+
+    category = request.GET.get('category')
+    if category in Item.SHORT_CATEGORY_TO_NAME \
+            and category != Item.Category.ALL:
+        items = items.filter(category=category)
+        category = Item.SHORT_CATEGORY_TO_NAME[category]
+    else:
+        category = Item.SHORT_CATEGORY_TO_NAME[Item.Category.ALL]
+
+    if items.count() == 0:
+        items = None
+    else:
+        items = items.order_by('-id')
+        searched = request.GET.get('searched')
+        if searched is not None and searched != "":
+            items = items.filter(title__icontains=searched)
+        items = pagination(request, items, 30)
+
+    return {'items': items, 'category': category}
 
 
 def store_item_detail(request, pk):
@@ -86,7 +124,7 @@ def shopping_bag(request):
         return redirect('store_choose_purchasing_mode')
 
     context = {'step': 1}
-    preorder = _get_preorder_or_none(request)
+    preorder = get_preorder_or_none(request)
 
     if preorder is None:
         # Shopping bag is empty.
@@ -99,6 +137,8 @@ def shopping_bag(request):
                 not request.POST['action'].startswith("delete_"):
             return HttpResponseBadRequest()
 
+    basket_items = BasketItem.objects.filter(order=preorder)
+
     if request.method == "POST" and request.POST['action'].startswith("delete"):
         # Single item is deleted.
         try:
@@ -106,9 +146,15 @@ def shopping_bag(request):
         except ValueError:
             return HttpResponseBadRequest()
         BasketItem.objects.get(id=delete_pk).delete()
-        messages.success(request, "Item deleted")
 
-    basket_items = BasketItem.objects.filter(order=preorder)
+        if basket_items.count() != 0:
+            messages.success(request, "Item deleted")
+        else:
+            # Delete order if there are no itemss
+            preorder.delete()
+            messages.success(
+                request, "Your shopping bag is deleted")
+            return redirect('store')
 
     if request.method == "POST" and request.POST['action'] == "cancel":
         # Whole basket is deleted.
@@ -137,10 +183,10 @@ def shopping_bag(request):
     if request.method == "POST" and request.POST['action'] == "pay":
         # Proceed to checkout.
         for form in forms:
-            if form.is_valid():
-                form.save()
-                return redirect('store_shipping')
-        return redirect('store')
+            if not form.is_valid():
+                return redirect('store')
+            form.save()
+        return redirect('store_shipping')
 
     context['items_and_forms'] = list(zip(basket_items, forms))
     context['expire_date'] = _get_basket_expire_date(preorder)
@@ -217,24 +263,11 @@ def _create_or_get_preorder_user(user):
         return Order.objects.create(buyer=user, status=Order.Status.PREORDER)
 
 
-def _get_preorder_or_none(request):
-    try:
-        if request.user.is_anonymous:
-            return Order.objects.get(
-                status=Order.Status.PREORDER,
-                buyer_anon=anonymous_user_with_saved_session(request))
-        else:
-            return Order.objects.get(status=Order.Status.PREORDER,
-                                     buyer=request.user)
-    except ObjectDoesNotExist:
-        return None
-
-
 def shipping(request):
     if anonymous_user_without_session(request):
         return redirect('store_choose_purchasing_mode')
 
-    preorder = _get_preorder_or_none(request)
+    preorder = get_preorder_or_none(request)
     context = _context_my_bag_total(preorder)
     if context is None:
         return render(request, 'store/shipping.html', {'no_items': True})
@@ -255,6 +288,7 @@ def shipping(request):
         valid_form_name = _save_name_data(request, name_form)
         if valid_form_address and valid_form_name:
             return redirect('store_payment')
+
     context['expire_date'] = _get_basket_expire_date(preorder)
     return render(request, 'store/shipping.html', context)
 
@@ -329,7 +363,7 @@ def payment(request):
     if anonymous_user_without_session(request):
         return redirect('store_choose_purchasing_mode')
 
-    preorder = _get_preorder_or_none(request)
+    preorder = get_preorder_or_none(request)
     if request.method == "POST":
         payment_form = PaymentForm(request.POST)
         if payment_form.is_valid():

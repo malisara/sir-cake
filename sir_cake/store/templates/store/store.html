@@ -14,14 +14,20 @@
 <div class="container">
     <div class="category-title-container">{{category|upper}}</div>
     <hr>
+
+    <div class="container mt-2 mb-2">
+        <div class="row justify-content-md-end">
+            <div class="col col-lg-4 ">
+                {% include 'sir_cake/search-field.html'%}
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="container products-grid mt-5">
     {% if items %}
     {% for item in items %}
-    <!--Only show the item if inventory > 0 -->
-    {% if item.quantity > 0 %}
-    <div>
+    <div class="mb-3">
         <a href="{% url 'store_item_detail' item.pk %}" class="non-link a-hover">
             <img src="{{item.image.url}}" class="rounded-image" height="200px"></img>
             <p class="product-title-store">{{item.short_title|title}}</p>
@@ -35,13 +41,12 @@
             </button>
         </form>
     </div>
-    {% endif %}
     {% endfor %}
     {% else %}
     No items
     {% endif %}
-
 </div>
+
 {% include 'sir_cake/paginator.html'%}
 
 {% endblock content %}
