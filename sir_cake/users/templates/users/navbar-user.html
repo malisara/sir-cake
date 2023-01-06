@@ -11,7 +11,7 @@
                 class="bi bi-box-arrow-in-right navbar-icon"></i></a>
         {% endif %}
 
-        {% if items_in_basket %}
+        {% if user_has_items_in_basket %}
         <a href="{% url 'store_shopping_bag' %}" class="non-link link-to-nav-gray">
             <i class="bi bi-basket3-fill navbar-icon bag-icon-fill">
             </i>
