@@ -70,8 +70,7 @@ def _available_items_and_category_context(request):
     items = items_in_basket_enough_quantity | items_not_in_basket
 
     category = request.GET.get('category')
-
-    if category in dict(Item.CATEGORIES_CHOICES) \
+    if category in Item.SHORT_CATEGORY_TO_NAME \
             and category != Item.Category.ALL:
         items = items.filter(category=category)
         category = Item.SHORT_CATEGORY_TO_NAME[category]
@@ -107,7 +106,7 @@ def store_item_detail(request, pk):
 
     form = BasketItemForm(_get_max_quantity_to_buy(item))
     return render(request, 'store/store-item-detail.html',
-                  {'item': item, 'form': form, })
+                  {'item': item, 'form': form})
 
 
 def choose_purchasing_mode(request):

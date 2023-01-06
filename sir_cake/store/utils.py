@@ -34,6 +34,11 @@ def get_items_and_prices_and_order_sum(shopping_bag):
     }
 
 
+def user_has_items_in_basket_context_processor(request):
+    return {'user_has_items_in_basket':
+            get_preorder_or_none(request) is not None}
+
+
 def get_preorder_or_none(request):
     try:
         if request.user.is_anonymous:
@@ -45,8 +50,3 @@ def get_preorder_or_none(request):
                                      buyer=request.user)
     except ObjectDoesNotExist:
         return None
-
-
-def user_has_items_in_basket_context_processor(request):
-    return {'user_has_items_in_basket':
-            get_preorder_or_none(request) is not None}
