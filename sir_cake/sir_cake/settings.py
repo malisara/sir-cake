@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'seller.apps.SellerConfig',
     'users.apps.UsersConfig',
     'store.apps.StoreConfig',
+    "django_cron",
 
 ]
 
@@ -148,3 +149,7 @@ LOGIN_REDIRECT_URL = 'store'
 
 BASKET_EXPIRES_MINUTES = 30
 INVOICE_DUE_DATE_DAYS = 30
+
+CRON_CLASSES = [
+    "store.cron_job.DeleteExpiredBasketsCronJob",
+]
