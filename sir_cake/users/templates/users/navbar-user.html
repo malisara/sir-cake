@@ -1,3 +1,4 @@
+{% load static %}
 <nav class="navbar">
 
     <div class="container-fluid justify-content-end">
@@ -25,7 +26,10 @@
     </div>
 
     <div class="container-fluid justify-content-center">
-        <a class="navbar-logo-title non-link" href="{% url 'store' %}">Logo</a>
+        <a href="{% url 'store' %}">
+            <img href="{% url 'store' %}" src="{% static  'store/logo.svg' %}" class="logo">
+            </img>
+        </a>
     </div>
 
 </nav>

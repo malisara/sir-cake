@@ -503,6 +503,10 @@ nav {
     color: var(--gray-text);
 }
 
+.logo {
+    height: 10rem;
+}
+
 .navbar-icon {
     padding-right: 1rem;
     font-size: 1.2rem;
