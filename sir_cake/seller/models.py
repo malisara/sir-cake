@@ -35,7 +35,7 @@ class Item(models.Model):
         choices=CATEGORIES_CHOICES,
         default=Category.ALL,
     )
-    image = models.ImageField(upload_to='product_pics')  # TODO: default image
+    image = models.ImageField(upload_to='product_pics')
     date_posted = models.DateTimeField(default=timezone.now)
     quantity = models.IntegerField(default=0, validators=[
         MinValueValidator(0.0)])

@@ -36,7 +36,8 @@ def new_item(request):
     else:
         form = NewItemForm()
 
-    return render(request, 'seller/new_item.html', {'form': form})
+    return render(request, 'seller/new_item.html',
+                  {'form': form, 'url_name': _get_url_name_for_navbar(request)})
 
 
 @user_is_seller
@@ -45,7 +46,8 @@ def item_detail(request, pk):
         item = Item.objects.get(id=pk)
     except ObjectDoesNotExist:
         return HttpResponseNotFound()
-    return render(request, 'seller/item-detail-page.html', {'item': item})
+    return render(request, 'seller/item-detail-page.html',
+                  {'item': item, 'url_name': _get_url_name_for_navbar(request)})
 
 
 @user_is_seller
@@ -62,7 +64,7 @@ def all_items(request):
         items = pagination(request, items, 15)
 
     return render(request, 'seller/all_items.html',
-                  {'items': items, ' url_name': url_name})
+                  {'items': items, 'url_name': url_name})
 
 
 @user_is_seller
@@ -86,7 +88,8 @@ def edit_item(request, pk):
 
     context = {
         'item': item,
-        'form': form}
+        'form': form,
+        'url_name': _get_url_name_for_navbar(request)}
 
     return render(request, 'seller/edit-item.html', context)
 
@@ -102,7 +105,8 @@ def delete_item(request, pk):
         item.delete()
         messages.success(request, "Item successfully deleted")
         return redirect('seller_all_items')
-    return render(request, 'seller/delete-item.html', {'item': item})
+    return render(request, 'seller/delete-item.html',
+                  {'item': item, 'url_name': _get_url_name_for_navbar(request)})
 
 
 @user_is_seller
@@ -153,6 +157,7 @@ def order_detail(request, pk):
         return redirect('seller_order_detail', pk=(pk))
 
     context = _order_context(order)
+    context['url_name'] = _get_url_name_for_navbar(request)
     return render(request, 'seller/order-detail.html', context)
 
 
@@ -161,6 +166,14 @@ def _mark_order_as_shipped(request, order):
         order.status = Order.Status.SHIPPED
         order.save()
         messages.success(request, 'Order marked as shipped')
+
+
+def _get_url_name_for_navbar(request):
+    url = request.resolver_match.url_name
+    if 'item' in url:
+        return 'seller_all_items'
+    if 'order' in url:
+        return 'seller_orders'
 
 
 class UserIsSellerMixin(UserPassesTestMixin):
