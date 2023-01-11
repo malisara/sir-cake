@@ -174,6 +174,7 @@ def _get_url_name_for_navbar(request):
         return 'seller_all_items'
     if 'order' in url:
         return 'seller_orders'
+    return None
 
 
 class UserIsSellerMixin(UserPassesTestMixin):
