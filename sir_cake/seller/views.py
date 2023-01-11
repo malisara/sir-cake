@@ -36,8 +36,7 @@ def new_item(request):
     else:
         form = NewItemForm()
 
-    return render(request, 'seller/new_item.html',
-                  {'form': form, 'url_name': _get_url_name_for_navbar(request)})
+    return render(request, 'seller/new_item.html', {'form': form})
 
 
 @user_is_seller
@@ -46,8 +45,7 @@ def item_detail(request, pk):
         item = Item.objects.get(id=pk)
     except ObjectDoesNotExist:
         return HttpResponseNotFound()
-    return render(request, 'seller/item-detail-page.html',
-                  {'item': item, 'url_name': _get_url_name_for_navbar(request)})
+    return render(request, 'seller/item-detail-page.html', {'item': item})
 
 
 @user_is_seller
@@ -63,8 +61,7 @@ def all_items(request):
             items = items.filter(title__icontains=searched)
         items = pagination(request, items, 15)
 
-    return render(request, 'seller/all_items.html',
-                  {'items': items, 'url_name': url_name})
+    return render(request, 'seller/all_items.html', {'items': items})
 
 
 @user_is_seller
@@ -88,8 +85,8 @@ def edit_item(request, pk):
 
     context = {
         'item': item,
-        'form': form,
-        'url_name': _get_url_name_for_navbar(request)}
+        'form': form
+    }
 
     return render(request, 'seller/edit-item.html', context)
 
@@ -106,7 +103,7 @@ def delete_item(request, pk):
         messages.success(request, "Item successfully deleted")
         return redirect('seller_all_items')
     return render(request, 'seller/delete-item.html',
-                  {'item': item, 'url_name': _get_url_name_for_navbar(request)})
+                  {'item': item})
 
 
 @user_is_seller
@@ -138,8 +135,7 @@ def orders(request):
         sum_price = total_order_price(BasketItem.objects.filter(order=order))
         orders_and_prices.append((order, sum_price))
 
-    context = {'url_name': request.resolver_match.url_name,
-               'order_status': order_status,
+    context = {'order_status': order_status,
                'items': pagination(request, orders_and_prices, 30)}
 
     return render(request, 'seller/orders.html', context)
@@ -157,7 +153,6 @@ def order_detail(request, pk):
         return redirect('seller_order_detail', pk=(pk))
 
     context = _order_context(order)
-    context['url_name'] = _get_url_name_for_navbar(request)
     return render(request, 'seller/order-detail.html', context)
 
 
@@ -166,15 +161,6 @@ def _mark_order_as_shipped(request, order):
         order.status = Order.Status.SHIPPED
         order.save()
         messages.success(request, 'Order marked as shipped')
-
-
-def _get_url_name_for_navbar(request):
-    url = request.resolver_match.url_name
-    if 'item' in url:
-        return 'seller_all_items'
-    if 'order' in url:
-        return 'seller_orders'
-    return None
 
 
 class UserIsSellerMixin(UserPassesTestMixin):
@@ -221,7 +207,6 @@ def overview(request):
     # more complex ones are fetched by javascript via API endpoints
     last_month_sales, last_month_registered_users = statistics.last_30_days_statistics()
     context = {
-        'url_name': request.resolver_match.url_name,
         'inventory_value': statistics.inventory_value(),
         'total_sales': statistics.total_sales(),
         'number_of_visitors': statistics.number_of_visitors(),

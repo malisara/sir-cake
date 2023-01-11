@@ -156,7 +156,7 @@ def shopping_bag(request):
 
     if request.method == "POST" and request.POST['action'] == "cancel":
         # Whole basket is deleted.
-        _delete_order_and_basket_items(preorder)
+        preorder.delete()
         messages.success(request, "Your shopping bag is deleted")
         return redirect('store')
 
@@ -421,11 +421,6 @@ def _shipping_data_is_missing(request):
         return ShippingAddress.objects.filter(user_anon=user).count() == 0
     else:
         return ShippingAddress.objects.filter(user=request.user).count() == 0
-
-
-def _delete_order_and_basket_items(order):
-    BasketItem.objects.filter(order=order).delete()
-    order.delete()
 
 
 def landing_page(request):
