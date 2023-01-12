@@ -61,8 +61,7 @@ def all_items(request):
             items = items.filter(title__icontains=searched)
         items = pagination(request, items, 15)
 
-    return render(request, 'seller/all_items.html',
-                  {'items': items, ' url_name': url_name})
+    return render(request, 'seller/all_items.html', {'items': items})
 
 
 @user_is_seller
@@ -86,7 +85,8 @@ def edit_item(request, pk):
 
     context = {
         'item': item,
-        'form': form}
+        'form': form
+    }
 
     return render(request, 'seller/edit-item.html', context)
 
@@ -102,7 +102,8 @@ def delete_item(request, pk):
         item.delete()
         messages.success(request, "Item successfully deleted")
         return redirect('seller_all_items')
-    return render(request, 'seller/delete-item.html', {'item': item})
+    return render(request, 'seller/delete-item.html',
+                  {'item': item})
 
 
 @user_is_seller
@@ -134,8 +135,7 @@ def orders(request):
         sum_price = total_order_price(BasketItem.objects.filter(order=order))
         orders_and_prices.append((order, sum_price))
 
-    context = {'url_name': request.resolver_match.url_name,
-               'order_status': order_status,
+    context = {'order_status': order_status,
                'items': pagination(request, orders_and_prices, 30)}
 
     return render(request, 'seller/orders.html', context)
@@ -207,7 +207,6 @@ def overview(request):
     # more complex ones are fetched by javascript via API endpoints
     last_month_sales, last_month_registered_users = statistics.last_30_days_statistics()
     context = {
-        'url_name': request.resolver_match.url_name,
         'inventory_value': statistics.inventory_value(),
         'total_sales': statistics.total_sales(),
         'number_of_visitors': statistics.number_of_visitors(),
