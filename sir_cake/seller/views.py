@@ -31,8 +31,8 @@ def new_item(request):
             messages.success(request, "New item successfully saved")
             return redirect('seller_all_items')
         else:
-            messages.error(
-                "Error: Unable to save the item. Please try again.")
+            messages.error(request,
+                           "Error: Unable to save the item. Please try again.")
     else:
         form = NewItemForm()
 

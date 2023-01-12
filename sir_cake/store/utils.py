@@ -1,4 +1,7 @@
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
+
 
 from seller.utils import total_order_price
 from users.models import AnonymousUser
@@ -50,3 +53,8 @@ def get_preorder_or_none(request):
                                      buyer=request.user)
     except ObjectDoesNotExist:
         return None
+
+
+def get_basket_expire_date(preorder):
+    expires_delta = timezone.timedelta(minutes=settings.BASKET_EXPIRES_MINUTES)
+    return timezone.make_naive(preorder.order_date + expires_delta)

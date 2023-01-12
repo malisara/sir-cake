@@ -4,3 +4,4 @@ xhtml2pdf==0.2.8
 djangorestframework==3.13.1
 Pillow==9.1.1
 autopep8==1.7.0
+django-cron==0.6.0

@@ -1,22 +1,20 @@
-from django.db.models import OuterRef, Subquery, Sum
-from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import OuterRef, Subquery, Sum
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, redirect
-from django.utils import timezone
 
+from users.models import AnonymousUser, ShippingAddress
 from seller.models import Item, Order
 from sir_cake.utils import pagination
 from store.models import BasketItem
-from users.models import ShippingAddress
 from users.forms import (AnonymousUserUpdateNamesForm,
                          ShippingAddressForm,
                          UserUpdateNamesForm)
 from .forms import BasketItemForm, PaymentForm
-from users.models import AnonymousUser
 from .utils import (anonymous_user_without_session,
                     anonymous_user_with_saved_session,
+                    get_basket_expire_date,
                     get_items_and_prices_and_order_sum,
                     get_number_reserved_items_in_preorders,
                     get_preorder_or_none)
@@ -189,7 +187,8 @@ def shopping_bag(request):
         return redirect('store_shipping')
 
     context['items_and_forms'] = list(zip(basket_items, forms))
-    context['expire_date'] = _get_basket_expire_date(preorder)
+    context['expire_date'] = get_basket_expire_date(
+        preorder).strftime("%Y-%m-%d %H:%M:%S")
     return render(request, 'store/shopping-bag.html', context)
 
 
@@ -289,7 +288,8 @@ def shipping(request):
         if valid_form_address and valid_form_name:
             return redirect('store_payment')
 
-    context['expire_date'] = _get_basket_expire_date(preorder)
+    context['expire_date'] = get_basket_expire_date(
+        preorder).strftime("%Y-%m-%d %H:%M:%S")
     return render(request, 'store/shipping.html', context)
 
 
@@ -394,7 +394,8 @@ def payment(request):
 
     context['step'] = 3
     context['form'] = payment_form
-    context['expire_date'] = _get_basket_expire_date(preorder)
+    context['expire_date'] = get_basket_expire_date(
+        preorder).strftime("%Y-%m-%d %H:%M:%S")
     return render(request, 'store/payment.html', context)
 
 
@@ -425,12 +426,6 @@ def _shipping_data_is_missing(request):
 def _delete_order_and_basket_items(order):
     BasketItem.objects.filter(order=order).delete()
     order.delete()
-
-
-def _get_basket_expire_date(preorder):
-    expires_delta = timezone.timedelta(minutes=settings.BASKET_EXPIRES_MINUTES)
-    return timezone.make_naive(preorder.order_date
-                               + expires_delta).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def landing_page(request):
