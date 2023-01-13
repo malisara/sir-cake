@@ -1,7 +1,9 @@
 {% extends 'users/base-user.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}-Payment{% endblock %}
 
 {% block content %}
-{% load crispy_forms_tags %}
 
 {% if no_items %}
 {% include 'store/empty-bag-text.html'%}
