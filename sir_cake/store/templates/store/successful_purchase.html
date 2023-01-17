@@ -1,0 +1,13 @@
+{% extends 'users/base-user.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center mt-5">
+    <img src="{% static 'store/after-payment-graphic.jpg' %}" alt="" width="40%;">
+</div>
+<div class="d-flex justify-content-center mt-4">
+    <a class="detail-title non-link align-self-center" href="{% url 'store' %}">Continue with shopping?</a>
+</div>
+
+{% endblock %}
