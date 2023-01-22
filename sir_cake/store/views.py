@@ -373,7 +373,7 @@ def payment(request):
             for item in basket_items:  # Decrease the inventory
                 item.item_to_buy.quantity -= item.quantity
                 item.item_to_buy.save()
-            return redirect('successful_purchase')
+            return redirect('store_successful_purchase')
         else:
             errors_cvv = payment_form.errors.as_data().get('cvv', [])
             errors_credit_card = payment_form.errors.as_data().get(
