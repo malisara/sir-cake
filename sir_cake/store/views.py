@@ -373,8 +373,7 @@ def payment(request):
             for item in basket_items:  # Decrease the inventory
                 item.item_to_buy.quantity -= item.quantity
                 item.item_to_buy.save()
-            # TODO: redirect to success page
-            return redirect('store')
+            return redirect('store_successful_purchase')
         else:
             errors_cvv = payment_form.errors.as_data().get('cvv', [])
             errors_credit_card = payment_form.errors.as_data().get(
@@ -425,3 +424,7 @@ def _shipping_data_is_missing(request):
 
 def landing_page(request):
     return render(request, 'store/landing-page.html')
+
+
+def successful_purchase(request):
+    return render(request, 'store/successful_purchase.html')

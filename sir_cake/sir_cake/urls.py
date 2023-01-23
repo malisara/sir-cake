@@ -60,6 +60,8 @@ urlpatterns = [
     path('shopping-bag/', store_views.shopping_bag, name="store_shopping_bag"),
     path('shipping/', store_views.shipping, name="store_shipping"),
     path('payment/', store_views.payment, name="store_payment"),
+    path('successful-purchase/', store_views.successful_purchase,
+         name="store_successful_purchase"),
     path('', store_views.landing_page, name="store_landing_page"),
 ]
 
