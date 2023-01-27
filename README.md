@@ -30,7 +30,11 @@ The other part of the application is meant for sellers of e-commerce and isn't a
 ![](readme/overview.gif)
 
 
-## Technologies I used:
+## Database schema:
+
+![](readme/database.png)
+
+## Technologies:
 - Django ORM
 - Django signals
 - Django context processors
